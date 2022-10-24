@@ -1,0 +1,58 @@
+{% extends 'base_agent.html.twig' %}
+{% block title %}
+Transaction detail|{{ transaction.id }}
+{% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="blob">Receivable amount: {{ transaction.amountreceive }} {{ transaction.country.currency }}</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">N° transaction :<span class="float-end blob">{{ transaction.reference }}</span> </li>
+                        <li class="list-group-item">Created By :<span class="float-end blob"> {{ transaction.createdby.name }}</span></li>
+                        <li class="list-group-item">Sending Amount : <span class="float-end blob">{{ transaction.amount }} {{ transaction.countryfrom.currency }}</span></li>
+                        <li class="list-group-item">Source of fund : <span class="float-end blob">{{ transaction.sourcefund.name }}</span></li>
+                        <li class="list-group-item">Sending Purpose : <span class="float-end blob">{{ transaction.sourcepurpose.name }}</span></li>
+                        <li class="list-group-item">Status:<span class="float-end blob"> {{ transaction.status }}</span></li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7 stretch-card">
+            <div class="card">
+                <div class="card-header bg-primary">
+                    <h5 class="card-title">Recipient Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <ul class="list-group-flush">
+                                <li class="list-group-item">Sender name: <span class="float-end blob">{{ transaction.sender.name }}</span></li>
+                                <li class="list-group-item">Sender Adress: <span class="float-end blob">{{ transaction.sender.address }}</span></li>
+                                <li class="list-group-item">Sender phone: <span class="float-end blob">{{ transaction.sender.phone }}</span></li>
+                                <li class="list-group-item">Country from: <span class="float-end blob">{{ transaction.countryfrom.name }}</span></li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <ul class="list-group-flush">
+                                <li class="list-group-item">Receiver name:<span class="float-end blob"> {{ transaction.receiver.name }}</span></li>
+                                <li class="list-group-item">Receiver Adress:<span class="float-end blob"> {{ transaction.receiver.address }}</span></li>
+                                <li class="list-group-item">Receiver phone:<span class="float-end blob"> {{ transaction.receiver.phone }}</span></li>
+                                <li class="list-group-item">Country to: <span class="float-end blob">{{ transaction.country.name }}</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+

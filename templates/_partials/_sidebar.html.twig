@@ -1,0 +1,162 @@
+<nav class="sidebar">
+    <div class="sidebar-header">
+        <a href="#" class="sidebar-brand">
+            Remittance<span></span>
+        </a>
+        <div class="sidebar-toggler not-active">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <div class="sidebar-body">
+        <ul class="nav">
+            <li class="nav-item nav-category">Main</li>
+            <li {% if app.request.attributes.get( '_route' ) starts with 'app_agent_deposit_add' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                <a href="{{ path('homeadmin') }}" class="nav-link">
+                    <i class="link-icon" data-feather="box"></i>
+                    <span class="link-title">Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item nav-category">Managers</li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#users" role="button" aria-expanded="false" aria-controls="emails">
+                    <i class="link-icon" data-feather="users"></i>
+                    <span class="link-title">Mannagers users</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
+                </a>
+                <div class="collapse" id="users">
+                    <ul class="nav sub-menu">
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_manager_customer_active' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_manager_customer_active') }}" class="nav-link">Active users</a>
+                        </li>
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_manager_customer_banned' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_manager_customer_banned') }}" class="nav-link">Banned users</a>
+                        </li>
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_manager_customer_all' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_manager_customer_all') }}" class="nav-link">All users</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#agents" role="button" aria-expanded="false" aria-controls="emails">
+                    <i class="link-icon" data-feather="user-plus"></i>
+                    <span class="link-title">Mannagers Agents</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
+                </a>
+                <div class="collapse" id="agents">
+                    <ul class="nav sub-menu">
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_manager_agent_active' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_manager_agent_active') }}" class="nav-link">Active agents</a>
+                        </li>
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_manager_agent_banned' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_manager_agent_banned') }}" class="nav-link">Banned agents</a>
+                        </li>
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_manager_agent_all' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_manager_agent_all') }}" class="nav-link">All agents</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item nav-category">Sources</li>
+            <li c{% if app.request.attributes.get( '_route' ) starts with 'app_static_country' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                <a href="{{ path('app_static_country') }}" class="nav-link">
+                    <i class="link-icon" data-feather="flag"></i>
+                    <span class="link-title">Countries</span>
+                </a>
+            </li>
+            <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_sourcefounds' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                <a href="{{ path('app_static_sourcefounds') }}" class="nav-link">
+                    <i class="link-icon" data-feather="list"></i>
+                    <span class="link-title">Sources founds</span>
+                </a>
+            </li>
+            <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_sourcepurpose' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                <a href="{{ path('app_static_sourcepurpose') }}" class="nav-link">
+                    <i class="link-icon" data-feather="list"></i>
+                    <span class="link-title">Sources purpose</span>
+                </a>
+            </li>
+            <li class="nav-item nav-category">Money</li>
+            <li  class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#sendmoney" role="button" aria-expanded="false" aria-controls="emails">
+                    <i class="link-icon" data-feather="dollar-sign"></i>
+                    <span class="link-title">Send Money</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
+                </a>
+                <div class="collapse" id="sendmoney">
+                    <ul class="nav sub-menu">
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_sendall' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_static_sendall') }}" class="nav-link">All</a>
+                        </li>
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_sendpaid' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_static_sendpaid') }}" class="nav-link">Paid</a>
+                        </li>
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_sendrefunded' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_static_sendrefunded') }}" class="nav-link">Refunded</a>
+                        </li>
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_sendpayout' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_static_sendpayout') }}" class="nav-link">Payout</a>
+                        </li>
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_sendrejet' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_static_sendrejet') }}" class="nav-link">Reject</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#gateways" role="button" aria-expanded="false" aria-controls="emails">
+                    <i class="link-icon" data-feather="credit-card"></i>
+                    <span class="link-title">Gateways</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
+                </a>
+                <div class="collapse" id="gateways">
+                    <ul class="nav sub-menu">
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_gatewaymanuel' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_static_gatewaymanuel') }}" class="nav-link">Manuel</a>
+                        </li>
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_gatewayautomatic' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_static_gatewayautomatic') }}" class="nav-link">Automatique</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#deposits" role="button" aria-expanded="false" aria-controls="emails">
+                    <i class="link-icon" data-feather="clipboard"></i>
+                    <span class="link-title">Deposits</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
+                </a>
+                <div class="collapse" id="deposits">
+                    <ul class="nav sub-menu">
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_depositpending' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_static_depositpending') }}" class="nav-link">Pending deposits</a>
+                        </li>
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_depositsucces' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_static_depositsucces') }}" class="nav-link">Successful </a>
+                        </li>
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_depositreject' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_static_depositreject') }}" class="nav-link">Reject</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item nav-category">Statistics</li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#reports" role="button" aria-expanded="false" aria-controls="reports">
+                    <i class="link-icon" data-feather="bar-chart-2"></i>
+                    <span class="link-title">Reports</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
+                </a>
+                <div class="collapse" id="reports">
+                    <ul class="nav sub-menu">
+                        <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_depositsucces' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                            <a href="{{ path('app_static_depositsucces') }}" class="nav-link">report</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>

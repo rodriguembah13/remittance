@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+
+{% endblock %}
+ {% block breadcrumb %}
+     <nav class="page-breadcrumb">
+         <ol class="breadcrumb">
+             <li class="breadcrumb-item"><a href="#">Agents</a></li>
+             <li class="breadcrumb-item active" aria-current="page">Edit</li>
+         </ol>
+     </nav>
+ {% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="col-md-12 grid-margin stretch-card card">
+            <div class="card-header">
+                <h4>Edit agent</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+                                <input type="text" name="name" value="{{ agent.compte.name }}" class="form-control" placeholder="Enter name">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" value="{{ agent.compte.email }}" class="form-control" placeholder="Enter email">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label">Phone</label>
+                                <input type="text" value="{{ agent.compte.phone }}" name="phone" class="form-control" placeholder="Enter phone">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label">City</label>
+                                <input name="city" type="text" value="{{ agent.compte.city }}" class="form-control" placeholder="Enter city">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label">State</label>
+                                <input name="state" type="text" value="{{ agent.compte.state }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label">Country</label>
+                                <input name="country" value="{{ agent.country }}" type="text" class="form-control" placeholder="Enter country">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label">Address</label>
+                                <input name="address" type="text" value="{{ agent.compte.address }}" class="form-control" placeholder="Enter Adress">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label">Zip/Postal</label>
+                                <input name="postal" type="text" value="{{ agent.compte.postal }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-check form-switch mb-2">
+                                <input value="{{ agent.kycverify }}" type="checkbox" name="kyc" class="form-check-input" id="formSwitch1">
+                                <label class="form-check-label" for="formSwitch1">Phone verified</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button type="submit" class="btn btn-primary submit">Submit</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
