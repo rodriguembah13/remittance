@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Country;
+use App\Entity\GatewayMethod;
 use App\Entity\Payment;
 use App\Entity\Sourcefunds;
 use App\Entity\Sourcepurpose;
@@ -399,16 +400,7 @@ class StaticController extends AbstractController
 
         ]);
     }
-    /**
-     * @Route("gatewaymanuel", name="app_static_gatewaymanuel", methods={"GET","POST"})
-     * @return Response
-     */
-    public function gatewaymanuel(Request $request): Response
-    {
-        return $this->render('static/gatewaymanuel.html.twig', [
 
-        ]);
-    }
     /**
      * @Route("depositpending", name="app_static_depositpending", methods={"GET","POST"})
      * @return Response
@@ -532,6 +524,48 @@ class StaticController extends AbstractController
             return $table->getResponse();
         }
         return $this->render('static/depositreject.html.twig', [
+            'datatable' => $table
+        ]);
+    }
+    /**
+     * @Route("gatewaymethod", name="app_static_gatewaymanuel", methods={"GET","POST"})
+     * @return Response
+     */
+    public function getwaymethod(Request $request): Response
+    {
+        $table = $this->dataTableFactory->create()
+            ->add('name', TextColumn::class, [
+                'field' => 'gateway_method.name'
+            ])
+            ->add('status', TextColumn::class, [
+                'className' => 'buttons',
+                'label' => 'status',
+                'render' => function ($value, $context) {
+                    if ($value) {
+                        return '<a class="btn btn-sm btn-success">Enable</a>';
+                    }else {
+                        return '<a class="btn btn-sm btn-warning">Disabled</a>';
+                    }
+                }])
+            ->add('id', TextColumn::class, [
+                'className' => 'buttons',
+                'label' => 'action',
+                'render' => function ($value, $context) {
+                    $url = $this->generateUrl('app_static_country_edit', ['id' => $context->getId()]);
+                    return '<a class="btn btn-sm btn-success"  href='.$url.'><i class="fa fa-edit"></i></a>';
+                }])
+            ->createAdapter(ORMAdapter::class, [
+                'entity' => GatewayMethod::class,
+                'query' => function (QueryBuilder $builder) {
+                    $builder
+                        ->select('gateway_method')
+                        ->from(GatewayMethod::class, 'gateway_method');
+                },
+            ])->handleRequest($request);
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
+        return $this->render('static/gatewaymethod.html.twig', [
             'datatable' => $table
         ]);
     }
@@ -666,6 +700,53 @@ class StaticController extends AbstractController
 
         return $this->render('static/editsourcepurpose.html.twig', [
             'sourcepurpose' => $sourcepurpose
+        ]);
+    }
+    /**
+     * @Route("gateway/new", name="app_static_gateway_new", methods={"GET","POST"})
+     * @param Request $request
+     * @return Response
+     */
+    public function newgateway(Request $request): Response
+    {  $entityManager = $this->getDoctrine()->getManager();
+
+        if ($request->getMethod() === 'POST') {
+            $gatewaymethod = new GatewayMethod();
+            $gatewaymethod->setName($request->get('name'));
+            $gatewaymethod->setRate($request->get('rate'));
+            $gatewaymethod->setCurrency($request->get('currency'));
+            $gatewaymethod->setFixedcharge($request->get('fixedcharge'));
+            $gatewaymethod->setMaxamount($request->get('maxamount'));
+            $gatewaymethod->setMinamount($request->get('minamount'));
+            $gatewaymethod->setPercentcharge($request->get('percentcharge'));
+
+            $entityManager->persist($gatewaymethod);
+            $entityManager->flush();
+            return $this->redirectToRoute('app_static_gatewaymanuel');
+        }
+        return $this->redirectToRoute('app_static_gatewaymanuel');
+    }
+    /**
+     * @Route("gatewaymethodedit/{id}", name="app_static_gatewaymethod_edit", methods={"GET","POST"})
+     */
+    public function editgatewaymethod(Request $request, GatewayMethod $gatewayMethod): Response
+    {
+        if ($request->getMethod() == 'POST') {
+            $entityManager = $this->getDoctrine()->getManager();
+            $gatewaymethod = new GatewayMethod();
+            $gatewaymethod->setName($request->get('name'));
+            $gatewaymethod->setRate($request->get('rate'));
+            $gatewaymethod->setCurrency($request->get('currency'));
+            $gatewaymethod->setFixedcharge($request->get('fixedcharge'));
+            $gatewaymethod->setMaxamount($request->get('maxamount'));
+            $gatewaymethod->setMinamount($request->get('minamount'));
+            $gatewaymethod->setPercentcharge($request->get('percentcharge'));
+            $entityManager->flush();
+            return $this->redirectToRoute('app_static_gatewaymanuel');
+        }
+
+        return $this->render('static/editgatewaymethod.html.twig', [
+            'gatewaymethod' => $gatewayMethod
         ]);
     }
 }

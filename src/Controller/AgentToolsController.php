@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Deposit;
 use App\Entity\Payment;
 use App\Entity\SenderReceiver;
 use App\Repository\AgentRepository;
@@ -67,10 +68,52 @@ class AgentToolsController extends AbstractController
      * @Route("/payouthistory", name="app_agent_payout_history")
      * @return Response
      */
-    public function payouthistory(): Response
+    public function payouthistory(Request $request): Response
     {
-        return $this->render('agent_tools/payout_history.html.twig', [
+        $user=$this->getUser();
+        $table = $this->dataTableFactory->create()
+            ->add('createdAt', TextColumn::class, [
+                'label'=>"Created"
+            ])
+            ->add('reference', TextColumn::class, [
+                'label'=>"N° transaction"
+            ])
+            ->add('amount', TextColumn::class, [
+                'label'=>"Amount"
+            ])
 
+            ->add('status', TextColumn::class, [
+                'className' => 'buttons',
+                'label' => 'status',
+                'render' => function ($value, $context) {
+                    if ($value) {
+                        return '<a class="btn btn-sm btn-success">Enable</a>';
+                    }else {
+                        return '<a class="btn btn-sm btn-warning">Disabled</a>';
+                    }
+                }])
+            ->add('id', TextColumn::class, [
+                'className' => 'buttons',
+                'label' => 'action',
+                'render' => function ($value, $context) {
+                    $url = $this->generateUrl('app_agent_transaction_detail', ['id' => $context->getId()]);
+                    return '<a class="btn btn-sm btn-success"  href='.$url.'><i class="fa fa-desktop"></i></a>';
+                }])
+            ->createAdapter(ORMAdapter::class, [
+                'entity' => Payment::class,
+                'query' => function (QueryBuilder $builder) use($user) {
+                    $builder
+                        ->select('payment')
+                        ->from(Deposit::class, 'payment')
+                        ->andWhere('payment.createdby = :createdby')
+                        ->setParameter('createdby',$user);
+                },
+            ])->handleRequest($request);
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
+        return $this->render('agent_tools/payout_history.html.twig', [
+            'datatable' => $table
         ]);
     }
     /**
@@ -160,10 +203,52 @@ class AgentToolsController extends AbstractController
      * @Route("/depositlist", name="app_agent_deposit_lis")
      * @return Response
      */
-    public function depositlist(): Response
+    public function depositlist(Request $request): Response
     {
-        return $this->render('agent_tools/depositlist.html.twig', [
+        $user=$this->getUser();
+        $table = $this->dataTableFactory->create()
+            ->add('createdAt', TextColumn::class, [
+                'label'=>"Created"
+            ])
+            ->add('reference', TextColumn::class, [
+                'label'=>"N° transaction"
+            ])
+            ->add('amount', TextColumn::class, [
+                'label'=>"Amount"
+            ])
 
+            ->add('status', TextColumn::class, [
+                'className' => 'buttons',
+                'label' => 'status',
+                'render' => function ($value, $context) {
+                    if ($value) {
+                        return '<a class="btn btn-sm btn-success">Enable</a>';
+                    }else {
+                        return '<a class="btn btn-sm btn-warning">Disabled</a>';
+                    }
+                }])
+            ->add('id', TextColumn::class, [
+                'className' => 'buttons',
+                'label' => 'action',
+                'render' => function ($value, $context) {
+                    $url = $this->generateUrl('app_agent_transaction_detail', ['id' => $context->getId()]);
+                    return '<a class="btn btn-sm btn-success"  href='.$url.'><i class="fa fa-desktop"></i></a>';
+                }])
+            ->createAdapter(ORMAdapter::class, [
+                'entity' => Payment::class,
+                'query' => function (QueryBuilder $builder) use($user) {
+                    $builder
+                        ->select('payment')
+                        ->from(Deposit::class, 'payment')
+                        ->andWhere('payment.createdby = :createdby')
+                        ->setParameter('createdby',$user);
+                },
+            ])->handleRequest($request);
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
+        return $this->render('agent_tools/depositlist.html.twig', [
+            'datatable' => $table
         ]);
     }
     /**

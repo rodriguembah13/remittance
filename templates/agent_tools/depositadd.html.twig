@@ -1,10 +1,73 @@
 {% extends 'base_agent.html.twig' %}
-
+{% block title %}
+    Remittance|Add money
+{% endblock %}
+ {% block breadcrumb %}
+     <nav class="page-breadcrumb">
+         <ol class="breadcrumb">
+             <li class="breadcrumb-item"><a href="#">Add</a></li>
+             <li class="breadcrumb-item active" aria-current="page">Money</li>
+         </ol>
+     </nav>
+ {% endblock %}
 {% block body %}
-
+    <div class="row justify-content-center">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-header bg-primary">
+                    <h5 class="card-title">Deposit</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="mb-3">
+                            <label for="message-text" class="form-label">Method</label>
+                            <select id="sourcefound" name="sourcefound" class="js-example-basic-single form-select"
+                                    data-width="50%">
+                              <option>Mobil money</option>
+                                <option>Virement bancaire</option>
+                            </select>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="message-text" class="form-label">Amount</label>
+                            <div class="input-group" id="datePickerExample">
+                                <input min="0.0" type="number" name="from_rate" class="form-control"
+                                       id="from-rate">
+                                <span class="input-group-text input-group-addon">USD</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <button type="button" id="submit_send" class="btn btn-primary">Proceed</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-header bg-primary">
+                    <h5 class="card-title">Summery</h5>
+                </div>
+                <div class="card-body">
+                    <div class="summary">
+                        <p><span class="text-uppercase mb-3">Amount</span> <span class="float-end blob" id="sumary_currency"></span></p>
+                        <hr>
+                        <p><span class="text-uppercase mb-3">Charge</span> <span class="float-end blob" id="sumary_total_charge"></span></p>
+                        <hr>
+                        <p><span class="text-uppercase mb-3">Payable</span> <span class="float-end blob" id="sumary_final_amout"></span></p>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
-{% block title %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function () {
 
+        });
+    </script>
 {% endblock %}
 

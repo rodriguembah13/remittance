@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\PaymentRepository;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: PaymentRepository::class)]
 class Payment
@@ -50,6 +52,17 @@ class Payment
 
     #[ORM\ManyToOne]
     private ?SenderReceiver $receiver = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTimeInterface $createdAt = null;
+
+    /**
+     * Payment constructor.
+     */
+    public function __construct()
+    {
+        $this->createdAt=new \DateTime('now');
+    }
+
     public function getId(): ?int
     {
         return $this->id;

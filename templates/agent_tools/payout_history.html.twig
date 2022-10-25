@@ -1,10 +1,35 @@
 {% extends 'base_agent.html.twig' %}
 
+{% block title %}All-Payout{% endblock %}
+ {% block breadcrumb %}
+     <nav class="page-breadcrumb">
+         <ol class="breadcrumb">
+             <li class="breadcrumb-item"><a href="#">Payout</a></li>
+             <li class="breadcrumb-item active" aria-current="page">All</li>
+         </ol>
+     </nav>
+ {% endblock %}
 {% block body %}
-
+    <div class="row">
+        <div class="col-md-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-header bg-primary">
+                    <h5 class="card-title">Payout</h5>
+                </div>
+                <div class="card-body">
+                    <div id="customers_table">{{ 'loading'|trans({}, 'messages') }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function () {
+            $('#customers_table').initDataTables({{ datatable_settings(datatable) }});
+        });
+    </script>
 {% endblock %}
 
-{% block title %}
-
-{% endblock %}
 

@@ -1,10 +1,48 @@
 {% extends 'base_agent.html.twig' %}
-
+{% block title %}
+    Remittance|Payout add
+{% endblock %}
+ {% block breadcrumb %}
+     <nav class="page-breadcrumb">
+         <ol class="breadcrumb">
+             <li class="breadcrumb-item"><a href="#">Payout</a></li>
+             <li class="breadcrumb-item active" aria-current="page">Add</li>
+         </ol>
+     </nav>
+ {% endblock %}
 {% block body %}
-
+    <div class="row justify-content-center">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-header bg-primary">
+                    <h5 class="card-title">Payout add</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="message-text" class="form-label">Transaction number</label>
+                            <div class="input-group" id="datePickerExample">
+                                <input min="0.0" type="text" name="from_rate" class="form-control"
+                                       id="from-rate">
+                                <span class="input-group-text input-group-addon">ID</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <button type="button" id="submit_send" class="btn btn-primary">Proceed</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
-{% block title %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function () {
 
+        });
+    </script>
 {% endblock %}
 
