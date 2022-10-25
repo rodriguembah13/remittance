@@ -14,6 +14,7 @@ class Payment
     public  const REJECT='REJECT';
     public  const REFUNDED='REFUNDED';
     public  const PAYOUT='PAYOUT';
+    public  const PENDING='PENDING';
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

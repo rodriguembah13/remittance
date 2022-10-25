@@ -10,8 +10,9 @@ use Doctrine\DBAL\Types\Types;
 #[ORM\Entity(repositoryClass: DepositRepository::class)]
 class Deposit
 {
-
-
+    public  const PAID='PAID';
+    public  const REJECT='REJECT';
+    public  const PENDING='PENDING';
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -36,6 +37,9 @@ class Deposit
     private ?float $rate = null;
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?DateTimeInterface $createdAt = null;
+
+    #[ORM\ManyToOne]
+    private ?GatewayMethod $method = null;
 
     public function __construct()
     {
@@ -157,6 +161,18 @@ class Deposit
     public function setCreatedAt(?DateTimeInterface $createdAt): void
     {
         $this->createdAt = $createdAt;
+    }
+
+    public function getMethod(): ?GatewayMethod
+    {
+        return $this->method;
+    }
+
+    public function setMethod(?GatewayMethod $method): self
+    {
+        $this->method = $method;
+
+        return $this;
     }
 
 }

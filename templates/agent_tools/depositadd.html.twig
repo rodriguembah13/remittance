@@ -21,17 +21,19 @@
                     <div class="row">
                         <div class="mb-3">
                             <label for="message-text" class="form-label">Method</label>
-                            <select id="sourcefound" name="sourcefound" class="js-example-basic-single form-select"
+                            <select id="gateway_method_deposit" name="gateway_method_deposit" class="js-example-basic-single form-select"
                                     data-width="50%">
-                              <option>Mobil money</option>
-                                <option>Virement bancaire</option>
+                                <option>Choisir une method</option>
+                                {% for gate in gatewaymethods %}
+                              <option data-rate="{{ gate.rate }}" data-currency="{{ gate.currency }}" data-percent="{{ gate.percentcharge }}" data-charge="{{ gate.fixedcharge }}" value="{{ gate.id }}">{{ gate.name }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="col-12 mb-3">
                             <label for="message-text" class="form-label">Amount</label>
                             <div class="input-group" id="datePickerExample">
                                 <input min="0.0" type="number" name="from_rate" class="form-control"
-                                       id="from-rate">
+                                       id="depositamount">
                                 <span class="input-group-text input-group-addon">USD</span>
                             </div>
                         </div>
@@ -49,11 +51,15 @@
                 </div>
                 <div class="card-body">
                     <div class="summary">
-                        <p><span class="text-uppercase mb-3">Amount</span> <span class="float-end blob" id="sumary_currency"></span></p>
+                        <p><span class="text-uppercase mb-3">Amount</span> <span class="float-end blob" id="sumary_amount"></span></p>
                         <hr>
                         <p><span class="text-uppercase mb-3">Charge</span> <span class="float-end blob" id="sumary_total_charge"></span></p>
                         <hr>
                         <p><span class="text-uppercase mb-3">Payable</span> <span class="float-end blob" id="sumary_final_amout"></span></p>
+                        <hr>
+                        <p><span class="text-uppercase mb-3">Conversation rate</span> <span class="float-end "><span class="blob">1USD=</span><span class="blob" id="sumary_conversion_rate"></span></span></p>
+                        <hr>
+                        <p><span class="text-uppercase mb-3">In </span> <span class="text-success" id="deposit_currency"></span> <span class="float-end blob" id="sumary_conversion_amout"></span></p>
                         <hr>
                     </div>
                 </div>
@@ -66,7 +72,46 @@
     {{ parent() }}
     <script>
         $(function () {
+            $("#gateway_method_deposit").change(function () {
+                $("#sumary_conversion_rate").text($("#gateway_method_deposit option:selected").data('rate'))
+                $("#deposit_currency").text($("#gateway_method_deposit option:selected").data('currency'))
+            })
+            $("#depositamount").keyup(function () {
+                var amount=$("#depositamount").val();
+                $("#sumary_amount").text(amount)
+                var charge=$("#gateway_method_deposit option:selected").data('charge');
+                var t_charge=amount*charge/100
+                $("#sumary_total_charge").text(t_charge);
+                $("#sumary_final_amout").text(parseFloat(t_charge)+parseFloat(amount));
+                $("#sumary_conversion_amout").text((parseFloat(t_charge)+parseFloat(amount))*$("#gateway_method_deposit option:selected").data('rate'));
+            });
+            $("#submit_send").click(function () {
+                $.ajax({
+                    url: "{{ path('add_deposit_ajax') }}",
+                    type: "POST",
+                    dataType: "JSON",
+                    data: {
+                        amount_usd:$("#sumary_amount").text(),
+                        amount_rate:$("#sumary_final_amout").text(),
+                        payable:$("#sumary_conversion_amout").text(),
+                        charge:$("#sumary_total_charge").text(),
+                        method:$("#gateway_method_deposit option:selected").val()
+                    },
+                    success: function (data) {
+                        var id=data['id'];
+                        var url = Routing.generate('app_agent_deposit_detail', {
+                            'id': id,
+                        });
+                        window.open(url,'_parent');
+                    },
+                    error: function (err) {
+                        setTimeout(function () {
+                            $("#overlay").fadeOut(300);
+                        }, 500);
+                    }
 
+                });
+            })
         });
     </script>
 {% endblock %}

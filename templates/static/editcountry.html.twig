@@ -14,6 +14,7 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-header bg-primary">
+                    <h4>Uptage country {{ country.name }}</h4>
                 </div>
                 <div class="card-body">
                     <form id="form_country" method="post" enctype="multipart/form-data">
@@ -361,7 +362,10 @@
                 templateResult: formatCountry,
                 data: isoCountries
             });
-            $("[name='country'] option:selected").val($('#init_country').val()).trigger('change')
+            console.log($('#init_country').val())
+           // $("[name='country'] option:selected").val("FR")
+            $("[name='country']").val($('#init_country').val()).trigger('change');
+          //  $("[name='country'] option:selected").select2("val", "AL");
             $("[name='currency'] option:selected").val($('#init_currency').val())
             $('#val_usd').text($('#init_currency').val())
             $('#val_usd2').text($('#init_currency').val())

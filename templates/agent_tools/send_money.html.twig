@@ -180,7 +180,7 @@
             $("[name='country_from']").change(function () {
                 $('#sumary_currency').text($("[name='country_from'] option:selected").data("value"))
                 $('#from_amount').text($("[name='country_from'] option:selected").data("value"))
-                //$('#to_amount').text($("[name='country'] option:selected").data("value"))
+                $('#to_amount').text($("[name='country'] option:selected").data("value"))
                 $('#flag_before').removeAttr('class');
                 $('#flag_before').addClass('flag-icon flag-icon-' + $("[name='country_from']").val().toLowerCase() + ' flag-icon-squared');
                 $.ajax({
@@ -209,6 +209,9 @@
             })
             $('#flag_after').addClass('flag-icon flag-icon-' + $("[name='country'] option:selected").val().toLowerCase() + ' flag-icon-squared');
             $("[name='country']").change(function () {
+                $('#sumary_currency').text($("[name='country_from'] option:selected").data("value"))
+                $('#from_amount').text($("[name='country_from'] option:selected").data("value"))
+                $('#to_amount').text($("[name='country'] option:selected").data("value"))
                 $('#flag_after').removeAttr('class');
                 $('#flag_after').addClass('flag-icon flag-icon-' + $("[name='country']").val().toLowerCase() + ' flag-icon-squared');
                 $.ajax({

@@ -157,6 +157,14 @@
                     </ul>
                 </div>
             </li>
+            <li class="nav-item nav-category">Configuration</li>
+            <li {% if app.request.attributes.get( '_route' ) starts with 'app_static_configuration' %} class="nav-item active"{% else %} class="nav-item" {% endif%}>
+                <a href="{{ path('app_static_configuration') }}" class="nav-link">
+                    <i class="link-icon" data-feather="settings"></i>
+                    <span class="link-title">Configuration</span>
+                </a>
+            </li>
+            <li class="nav-item nav-category"></li>
         </ul>
     </div>
 </nav>

@@ -7,11 +7,13 @@ use App\Entity\Payment;
 use App\Entity\SenderReceiver;
 use App\Repository\AgentRepository;
 use App\Repository\CountryRepository;
+use App\Repository\GatewayMethodRepository;
 use App\Repository\PaymentRepository;
 use App\Repository\SourcefundsRepository;
 use App\Repository\SourcepurposeRepository;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\DataTableFactory;
 use Psr\Log\LoggerInterface;
@@ -34,6 +36,7 @@ class AgentToolsController extends AbstractController
     private $sourcepurposeRepository;
     private $agentRepository;
     private $paymentRepository;
+    private $gatewayRepository;
 
     /**
      * ManagerAgentController constructor.
@@ -44,7 +47,7 @@ class AgentToolsController extends AbstractController
      * @param LoggerInterface $logger
      * @param DataTableFactory $dataTableFactory
      */
-    public function __construct(PaymentRepository $paymentRepository,AgentRepository $agentRepository,SourcefundsRepository $sourcefundRepository,SourcepurposeRepository $sourcepurposeRepository,CountryRepository $countryRepository,LoggerInterface $logger, DataTableFactory $dataTableFactory)
+    public function __construct(GatewayMethodRepository $gatewayRepository,PaymentRepository $paymentRepository,AgentRepository $agentRepository,SourcefundsRepository $sourcefundRepository,SourcepurposeRepository $sourcepurposeRepository,CountryRepository $countryRepository,LoggerInterface $logger, DataTableFactory $dataTableFactory)
     {
         $this->logger = $logger;
         $this->dataTableFactory = $dataTableFactory;
@@ -53,6 +56,7 @@ class AgentToolsController extends AbstractController
         $this->sourcepurposeRepository=$sourcepurposeRepository;
         $this->agentRepository=$agentRepository;
         $this->paymentRepository=$paymentRepository;
+        $this->gatewayRepository=$gatewayRepository;
     }
     /**
      * @Route("/transaction/", name="app_agent_transaction_history")
@@ -196,7 +200,7 @@ class AgentToolsController extends AbstractController
     public function depositadd(): Response
     {
         return $this->render('agent_tools/depositadd.html.twig', [
-
+            'gatewaymethods'=>$this->gatewayRepository->findAll()
         ]);
     }
     /**
@@ -207,7 +211,8 @@ class AgentToolsController extends AbstractController
     {
         $user=$this->getUser();
         $table = $this->dataTableFactory->create()
-            ->add('createdAt', TextColumn::class, [
+            ->add('createdAt', DateTimeColumn::class, [
+                'format'=>'Y-m-d h:i',
                 'label'=>"Created"
             ])
             ->add('reference', TextColumn::class, [
@@ -216,7 +221,15 @@ class AgentToolsController extends AbstractController
             ->add('amount', TextColumn::class, [
                 'label'=>"Amount"
             ])
-
+            ->add('charge', TextColumn::class, [
+                'label'=>"Charge"
+            ])
+            ->add('rate', TextColumn::class, [
+                'label'=>"Final amount"
+            ])
+            ->add('payble', TextColumn::class, [
+                'label'=>"Local amount"
+            ])
             ->add('status', TextColumn::class, [
                 'className' => 'buttons',
                 'label' => 'status',
@@ -231,7 +244,7 @@ class AgentToolsController extends AbstractController
                 'className' => 'buttons',
                 'label' => 'action',
                 'render' => function ($value, $context) {
-                    $url = $this->generateUrl('app_agent_transaction_detail', ['id' => $context->getId()]);
+                    $url = $this->generateUrl('app_agent_deposit_detail', ['id' => $context->getId()]);
                     return '<a class="btn btn-sm btn-success"  href='.$url.'><i class="fa fa-desktop"></i></a>';
                 }])
             ->createAdapter(ORMAdapter::class, [
@@ -264,6 +277,22 @@ class AgentToolsController extends AbstractController
 
         return $this->render('agent_tools/transactiondetail.html.twig', [
             'transaction' => $payment,
+            'id' => $payment->getId()
+        ]);
+    }
+    /**
+     * @Route("depositdetail/{id}", name="app_agent_deposit_detail", methods={"GET","POST"},options={"expose"=true})
+     */
+    public function editDeposit(Request $request, Deposit $payment): Response
+    {
+        if ($request->getMethod() == 'POST') {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->flush();
+            return $this->redirectToRoute('app_agent_deposit_lis');
+        }
+
+        return $this->render('agent_tools/depositdetail.html.twig', [
+            'deposit' => $payment,
             'id' => $payment->getId()
         ]);
     }
@@ -343,13 +372,41 @@ class AgentToolsController extends AbstractController
         $transaction->setCreatedby($this->getUser());
         $transaction->setSourcefund($source_found);
         $transaction->setSourcepurpose($source_puporse);
-        $transaction->setStatus(Payment::PAID);
+        $transaction->setStatus(Payment::PENDING);
 
         $entityManager->persist($transaction);
         $entityManager->flush();
 
         return new JsonResponse([
             'id' => $transaction->getId()
+        ], "200");
+    }
+    /**
+     * @Route("/add_deposit_ajax", name="add_deposit_ajax", methods={"GET","POST"})
+     */
+    public function addDepositajax(Request $request): JsonResponse
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $amount_usd=$request->get('amount_usd');
+        $amount_rate=$request->get('amount_rate');
+        $amount_payable=$request->get('payable');
+        $charge=$request->get('charge');
+        $method=$request->get('method');
+        $method_=$this->gatewayRepository->find($method);
+        $deposit=new Deposit();
+        $deposit->setReference($this->generatereference());
+        $deposit->setMethod($method_);
+        $deposit->setStatus(Deposit::PENDING);
+        $deposit->setRate($amount_rate);
+        $deposit->setAmount($amount_usd);
+        $deposit->setCharge($charge);
+        $deposit->setPayable($amount_payable);
+        $deposit->setCreatedby($this->getUser());
+                $entityManager->persist($deposit);
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'id' => $deposit->getId()
         ], "200");
     }
    private function generatereference(){

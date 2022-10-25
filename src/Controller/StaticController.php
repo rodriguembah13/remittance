@@ -3,12 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Country;
+use App\Entity\Deposit;
 use App\Entity\GatewayMethod;
 use App\Entity\Payment;
 use App\Entity\Sourcefunds;
 use App\Entity\Sourcepurpose;
+use App\Repository\ConfigurationRepository;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\DataTableFactory;
 use Psr\Log\LoggerInterface;
@@ -26,16 +29,29 @@ class StaticController extends AbstractController
 {
     private $logger;
     private $dataTableFactory;
+    private $configurationRepository;
 
     /**
      * ManagerAgentController constructor.
      * @param $logger
      * @param $dataTableFactory
      */
-    public function __construct(LoggerInterface $logger, DataTableFactory $dataTableFactory)
+    public function __construct(ConfigurationRepository $configurationRepository,LoggerInterface $logger, DataTableFactory $dataTableFactory)
     {
         $this->logger = $logger;
         $this->dataTableFactory = $dataTableFactory;
+        $this->configurationRepository=$configurationRepository;
+    }
+    /**
+     * @Route("configuration", name="app_static_configuration", methods={"GET","POST"})
+     * @return Response
+     */
+    public function configuration(Request $request): Response
+    {
+        $configuration=$this->configurationRepository->findOneByLast();
+        return $this->render('static/configuration.html.twig', [
+            'configuration' => $configuration
+        ]);
     }
     /**
      * @Route("countries", name="app_static_country", methods={"GET","POST"})
@@ -408,8 +424,24 @@ class StaticController extends AbstractController
     public function depositpending(Request $request): Response
     {
         $table = $this->dataTableFactory->create()
-            ->add('name', TextColumn::class, [
-                'field' => 'country.name'
+            ->add('createdAt', DateTimeColumn::class, [
+                'format'=>'Y-m-d h:i',
+                'label'=>"Created"
+            ])
+            ->add('reference', TextColumn::class, [
+                'label'=>"N° transaction"
+            ])
+            ->add('amount', TextColumn::class, [
+                'label'=>"Amount"
+            ])
+            ->add('charge', TextColumn::class, [
+                'label'=>"Charge"
+            ])
+            ->add('rate', TextColumn::class, [
+                'label'=>"Final amount"
+            ])
+            ->add('payble', TextColumn::class, [
+                'label'=>"Local amount"
             ])
             ->add('status', TextColumn::class, [
                 'className' => 'buttons',
@@ -425,15 +457,15 @@ class StaticController extends AbstractController
                 'className' => 'buttons',
                 'label' => 'action',
                 'render' => function ($value, $context) {
-                    $url = $this->generateUrl('app_static_country_edit', ['id' => $context->getId()]);
+                    $url = $this->generateUrl('app_static_deposit_edit', ['id' => $context->getId()]);
                     return '<a class="btn btn-sm btn-success"  href='.$url.'><i class="fa fa-edit"></i></a>';
                 }])
             ->createAdapter(ORMAdapter::class, [
-                'entity' => Sourcepurpose::class,
+                'entity' => Deposit::class,
                 'query' => function (QueryBuilder $builder) {
                     $builder
                         ->select('sourcefunds')
-                        ->from(Sourcepurpose::class, 'sourcefunds');
+                        ->from(Deposit::class, 'sourcefunds');
                 },
             ])->handleRequest($request);
         if ($table->isCallback()) {
@@ -450,8 +482,24 @@ class StaticController extends AbstractController
     public function depositsucces(Request $request): Response
     {
         $table = $this->dataTableFactory->create()
-            ->add('name', TextColumn::class, [
-                'field' => 'country.name'
+            ->add('createdAt', DateTimeColumn::class, [
+                'format'=>'Y-m-d h:i',
+                'label'=>"Created"
+            ])
+            ->add('reference', TextColumn::class, [
+                'label'=>"N° transaction"
+            ])
+            ->add('amount', TextColumn::class, [
+                'label'=>"Amount"
+            ])
+            ->add('charge', TextColumn::class, [
+                'label'=>"Charge"
+            ])
+            ->add('rate', TextColumn::class, [
+                'label'=>"Final amount"
+            ])
+            ->add('payble', TextColumn::class, [
+                'label'=>"Local amount"
             ])
             ->add('status', TextColumn::class, [
                 'className' => 'buttons',
@@ -467,15 +515,15 @@ class StaticController extends AbstractController
                 'className' => 'buttons',
                 'label' => 'action',
                 'render' => function ($value, $context) {
-                    $url = $this->generateUrl('app_static_country_edit', ['id' => $context->getId()]);
+                    $url = $this->generateUrl('app_static_deposit_edit', ['id' => $context->getId()]);
                     return '<a class="btn btn-sm btn-success"  href='.$url.'><i class="fa fa-edit"></i></a>';
                 }])
             ->createAdapter(ORMAdapter::class, [
-                'entity' => Sourcepurpose::class,
+                'entity' => Deposit::class,
                 'query' => function (QueryBuilder $builder) {
                     $builder
                         ->select('sourcefunds')
-                        ->from(Sourcepurpose::class, 'sourcefunds');
+                        ->from(Deposit::class, 'sourcefunds');
                 },
             ])->handleRequest($request);
         if ($table->isCallback()) {
@@ -492,8 +540,24 @@ class StaticController extends AbstractController
     public function depositreject(Request $request): Response
     {
         $table = $this->dataTableFactory->create()
-            ->add('name', TextColumn::class, [
-                'field' => 'country.name'
+            ->add('createdAt', DateTimeColumn::class, [
+                'format'=>'Y-m-d h:i',
+                'label'=>"Created"
+            ])
+            ->add('reference', TextColumn::class, [
+                'label'=>"N° transaction"
+            ])
+            ->add('amount', TextColumn::class, [
+                'label'=>"Amount"
+            ])
+            ->add('charge', TextColumn::class, [
+                'label'=>"Charge"
+            ])
+            ->add('rate', TextColumn::class, [
+                'label'=>"Final amount"
+            ])
+            ->add('payble', TextColumn::class, [
+                'label'=>"Local amount"
             ])
             ->add('status', TextColumn::class, [
                 'className' => 'buttons',
@@ -509,15 +573,15 @@ class StaticController extends AbstractController
                 'className' => 'buttons',
                 'label' => 'action',
                 'render' => function ($value, $context) {
-                    $url = $this->generateUrl('app_static_country_edit', ['id' => $context->getId()]);
+                    $url = $this->generateUrl('app_static_deposit_edit', ['id' => $context->getId()]);
                     return '<a class="btn btn-sm btn-success"  href='.$url.'><i class="fa fa-edit"></i></a>';
                 }])
             ->createAdapter(ORMAdapter::class, [
-                'entity' => Sourcepurpose::class,
+                'entity' => Deposit::class,
                 'query' => function (QueryBuilder $builder) {
                     $builder
                         ->select('sourcefunds')
-                        ->from(Sourcepurpose::class, 'sourcefunds');
+                        ->from(Deposit::class, 'sourcefunds');
                 },
             ])->handleRequest($request);
         if ($table->isCallback()) {
@@ -551,7 +615,7 @@ class StaticController extends AbstractController
                 'className' => 'buttons',
                 'label' => 'action',
                 'render' => function ($value, $context) {
-                    $url = $this->generateUrl('app_static_country_edit', ['id' => $context->getId()]);
+                    $url = $this->generateUrl('app_static_gatewaymethod_edit', ['id' => $context->getId()]);
                     return '<a class="btn btn-sm btn-success"  href='.$url.'><i class="fa fa-edit"></i></a>';
                 }])
             ->createAdapter(ORMAdapter::class, [
@@ -578,10 +642,9 @@ class StaticController extends AbstractController
     {  $entityManager = $this->getDoctrine()->getManager();
 
         if ($request->getMethod() === 'POST') {
-            dump($request);
             $country = new Country();
             $country->setName($request->get('name'));
-            $country->setFlag($request->get('flag'));
+            $country->setFlag($request->get('country'));
             $country->setCurrency($request->get('currency'));
             $country->setFixedcharged($request->get('fixedcharge'));
             $country->setRate($request->get('rate'));
@@ -726,14 +789,17 @@ class StaticController extends AbstractController
         }
         return $this->redirectToRoute('app_static_gatewaymanuel');
     }
+
     /**
      * @Route("gatewaymethodedit/{id}", name="app_static_gatewaymethod_edit", methods={"GET","POST"})
+     * @param Request $request
+     * @param GatewayMethod $gatewaymethod
+     * @return Response
      */
-    public function editgatewaymethod(Request $request, GatewayMethod $gatewayMethod): Response
+    public function editgatewaymethod(Request $request, GatewayMethod $gatewaymethod): Response
     {
         if ($request->getMethod() == 'POST') {
             $entityManager = $this->getDoctrine()->getManager();
-            $gatewaymethod = new GatewayMethod();
             $gatewaymethod->setName($request->get('name'));
             $gatewaymethod->setRate($request->get('rate'));
             $gatewaymethod->setCurrency($request->get('currency'));
@@ -746,7 +812,22 @@ class StaticController extends AbstractController
         }
 
         return $this->render('static/editgatewaymethod.html.twig', [
-            'gatewaymethod' => $gatewayMethod
+            'gatewaymethod' => $gatewaymethod
+        ]);
+    }
+    /**
+     * @Route("depositedit/{id}", name="app_static_deposit_edit", methods={"GET","POST"})
+     */
+    public function editdeposit(Request $request, Deposit $deposit): Response
+    {
+        if ($request->getMethod() == 'POST') {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->flush();
+            return $this->redirectToRoute('app_static_depositpending');
+        }
+
+        return $this->render('static/editdeposit.html.twig', [
+            'deposit' => $deposit
         ]);
     }
 }

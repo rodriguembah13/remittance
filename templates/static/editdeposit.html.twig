@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}R|detail deposit{% endblock %}
+ {% block breadcrumb %}
+     <nav class="page-breadcrumb">
+         <ol class="breadcrumb">
+             <li class="breadcrumb-item"><a href="#">Deposit</a></li>
+             <li class="breadcrumb-item active" aria-current="page">Detail</li>
+         </ol>
+     </nav>
+ {% endblock %}
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-8 grid-margin stretch-card">
+           <div class="card">
+               <div class="card-header">
+                   <h4>Detail deposit via {{ deposit.method.name }}</h4>
+               </div>
+               <div class="card-body">
+                   <ul class="list-group-flush">
+                       <li class="list-group-item">
+                           <span>Transaction N°:</span>
+                           <span class="float-end blob">{{ deposit.reference }}</span>
+                       </li>
+                       <li class="list-group-item">
+                           <span>Method:</span>
+                           <span class="float-end blob">{{ deposit.method.name }}</span>
+                       </li>
+                       <li class="list-group-item">
+                           <span>Amount:</span>
+                           <span class="float-end blob">{{ deposit.amount }}</span>
+                       </li>
+                       <li class="list-group-item">
+                           <span>Charge:</span>
+                           <span class="float-end blob">{{ deposit.charge }}</span>
+                       </li>
+                       <li class="list-group-item">
+                           <span>Rate:</span>
+                           <span class="float-end blob">{{ deposit.rate }}</span>
+                       </li>
+                       <li class="list-group-item">
+                           <span>Payable:</span>
+                           <span class="float-end blob">{{ deposit.payable }} {{ deposit.method.currency }}</span>
+                       </li>
+                       <li class="list-group-item">
+                           <span>Status:</span>
+                           <span class="float-end blob">{{ deposit.status }}</span>
+                       </li>
+                   </ul>
+               </div>
+           </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    </script>
+{% endblock %}
+
+
