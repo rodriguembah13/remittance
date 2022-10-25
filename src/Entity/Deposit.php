@@ -34,7 +34,7 @@ class Deposit
     private ?string $reference = null;
     #[ORM\Column(nullable: true)]
     private ?float $rate = null;
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?DateTimeInterface $createdAt = null;
 
     public function __construct()
