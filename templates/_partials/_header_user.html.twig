@@ -32,11 +32,23 @@
                                     <li class="nav-item">
                                         <a class="nav-link" href="#">Faqs</a>
                                     </li>
+                                    {% if is_granted("ROLE_CUSTOMER") %}
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Dashbord</a>
+                                        </li>
+                                    {% endif %}
                                 </ul>
                             </div> <!-- navbar collapse -->
-                            <div class="navbar-btn d-none d-sm-flex">
-                                <a class="main-btn" href="#">Login</a>
-                            </div>
+
+                            {% if is_granted("ROLE_CUSTOMER") %}
+                                <div class="navbar-btn d-none d-sm-flex">
+                                    <a class="main-btn" href="{{ path('app_logout') }}">Logout</a>
+                                </div>
+                                {% else %}
+                                    <div class="navbar-btn d-none d-sm-flex">
+                                        <a class="main-btn" href="{{ path('logincustomer') }}">Login</a>
+                                    </div>
+                            {% endif %}
                         </nav>
                     </div> <!-- navigation -->
                 </div>

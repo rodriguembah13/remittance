@@ -29,6 +29,9 @@
 	padding-top: 100px !important;
 	padding-bottom: 2px !important;
 }
+.error-area {
+	height: auto !important;
+}
 /* Deafult Margin & Padding */
 /*-- Margin Top --*/
 .mt-5 {

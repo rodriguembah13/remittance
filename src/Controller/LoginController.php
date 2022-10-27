@@ -50,10 +50,10 @@ class LoginController extends AbstractController
             $encodedPassword = $this->passwordEncoder->hashPassword($user, $plainPassword);
             $user->setPassword($encodedPassword);
             $user->setIsactivate(false);
-            $user->setRoles(["ROLE_USER"]);
+            $user->setRoles(["ROLE_CUSTOMER"]);
             $entityManager->persist($user);
             $entityManager->flush();
-            return $this->redirectToRoute('confirmuser');
+            return $this->redirectToRoute('homeuser');
         }
         return $this->render('login/register.html.twig', [
         ]);
@@ -81,6 +81,19 @@ class LoginController extends AbstractController
         $error=$authenticationUtils->getLastAuthenticationError();
         $lastusername=$authenticationUtils->getLastUsername();
         return $this->render('login/index.html.twig', [
+            'controller_name' => 'LoginController',
+            'last_username'=>$lastusername,
+            'error'=>$error
+        ]);
+    }
+    /**
+     * @Route("/logincustomer", name="logincustomer")
+     */
+    public function logincustomer(AuthenticationUtils $authenticationUtils): Response
+    {
+        $error=$authenticationUtils->getLastAuthenticationError();
+        $lastusername=$authenticationUtils->getLastUsername();
+        return $this->render('login/logincustomer.html.twig', [
             'controller_name' => 'LoginController',
             'last_username'=>$lastusername,
             'error'=>$error
