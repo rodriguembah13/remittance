@@ -9,6 +9,7 @@ use App\Repository\ConfigurationRepository;
 use App\Repository\CountryRepository;
 use App\Repository\CustomerRepository;
 use App\Service\EndpointService;
+use App\Service\paiement\TransferzeroService;
 use DateTime;
 use DateTimeZone;
 use Doctrine\ORM\QueryBuilder;
@@ -36,6 +37,7 @@ class DefaultController extends AbstractController
     private $configurationRepository;
     private $countryRepository;
     private $logger;
+    private $transfertzeroService;
 
     /**
      * @param CustomerRepository $customerRepository
@@ -45,7 +47,7 @@ class DefaultController extends AbstractController
      * @param ParameterBagInterface $parameterBag
      */
     public function __construct(CustomerRepository $customerRepository,ConfigurationRepository $configurationRepository,
-                                CountryRepository $countryRepository,
+                                CountryRepository $countryRepository,TransferzeroService $transferzeroService,
                                 LoggerInterface $logger,EndpointService $endpointService,
                                 DataTableFactory $dataTableFactory,ParameterBagInterface $parameterBag)
     {
@@ -56,6 +58,7 @@ class DefaultController extends AbstractController
         $this->customerRepository=$customerRepository;
         $this->countryRepository=$countryRepository;
         $this->configurationRepository=$configurationRepository;
+        $this->transfertzeroService=$transferzeroService;
     }
 
     /**
@@ -147,10 +150,28 @@ class DefaultController extends AbstractController
         $amount_to=$request->get('amount_to');
         $amount_from=$request->get('amount_from');
         $charge=$request->get('charge');
+        $charge=$request->get('charge');
+        $phone=$request->get('charge');
+        $refer=$request->get('charge');
+        $customer=$this->customerRepository->findOneBy(['compte'=>$this->getUser()]);
+        $data=[
+          'sender_firstname'=>$customer->getCompte()->getName(),
+            'sender_lastname'=>$customer->getCompte()->getName(),
+            'sender_countrycode'=>$from->getCode(),
+            'sender_phone'=>$customer->getCompte()->getPhone(),
+            'sender_city'=>$customer->getCompte()->getAddress(),
+            'sender_street'=>"",
+            'sender_codepostal'=>$customer->getCompte()->getPostal(),
+            'sender_birthdate'=>"",
+            'receiver_currency'=>$to->getCurrency(),
+            'reference'=>"",
+            'receiver_phone'=>$phone,
+            'receiver_amount'=>$amount_to,
+        ];
 
-
+        $response=$this->transfertzeroService->postcollection($data);
         return new JsonResponse([
-            []
+           $response
         ], "200");
     }
     /**
@@ -192,5 +213,53 @@ class DefaultController extends AbstractController
             'finalamount'=>round($final_amount,2),
             'payable_usd'=>round($final_amount/$from->getRate(),2)
         ], "200");
+    }
+    /**
+     * @Route("/dashboard", name="dashboarduser")
+     * @param Request $request
+     * @return Response
+     */
+    public function dashboarduser(Request $request): Response
+    {
+        return $this->render('default/dashboarduser.html.twig', [
+            'configuration'=>$this->configurationRepository->findOneByLast(),
+            'countries'=>$this->countryRepository->findAll(),
+        ]);
+    }
+    /**
+     * @Route("/history", name="historyuser")
+     * @param Request $request
+     * @return Response
+     */
+    public function historySendin(Request $request): Response
+    {
+        return $this->render('default/historyuser.html.twig', [
+            'configuration'=>$this->configurationRepository->findOneByLast(),
+            'countries'=>$this->countryRepository->findAll(),
+        ]);
+    }
+    /**
+     * @Route("/sendmoney", name="customer_sendmoney")
+     * @param Request $request
+     * @return Response
+     */
+    public function sendmoney(Request $request): Response
+    {
+        return $this->render('default/sendmoney.html.twig', [
+            'configuration'=>$this->configurationRepository->findOneByLast(),
+            'countries'=>$this->countryRepository->findAll(),
+        ]);
+    }
+    /**
+     * @Route("/profil", name="profil")
+     * @param Request $request
+     * @return Response
+     */
+    public function profil(Request $request): Response
+    {
+        return $this->render('default/profil.html.twig', [
+            'configuration'=>$this->configurationRepository->findOneByLast(),
+            'countries'=>$this->countryRepository->findAll(),
+        ]);
     }
 }

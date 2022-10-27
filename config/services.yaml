@@ -13,6 +13,9 @@ parameters:
     FLU_PUBLIC: '%env(resolve:FLU_PUBLIC)%'
     FLU_SECRET: '%env(resolve:FLU_SECRET)%'
     FLU_ENCRIPT: '%env(resolve:FLU_ENCRIPT)%'
+    ZERO_URL: '%env(resolve:ZERO_URL)%'
+    ZERO_API_KEY: '%env(resolve:ZERO_API_KEY)%'
+    ZERO_API_SECRET: '%env(resolve:ZERO_API_SECRET)%'
 
 services:
     # default configuration for services in *this* file

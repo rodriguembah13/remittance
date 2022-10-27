@@ -22,20 +22,41 @@
                                     <li class="nav-item {% if app.request.attributes.get( '_route' ) starts with 'app_about' %} active{% else %}  {% endif%}">
                                         <a class="nav-link" href="{{ path('homeuser') }}">Home</a>
                                     </li>
-                                    <li class="nav-item {% if app.request.attributes.get( '_route' ) starts with 'app_about' %} active{% else %}  {% endif%}">
-                                        <a class="nav-link" href="#">About</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#">Contact</a>
-                                    </li>
 
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#">Faqs</a>
-                                    </li>
                                     {% if is_granted("ROLE_CUSTOMER") %}
                                         <li class="nav-item">
-                                            <a class="nav-link" href="#">Dashbord</a>
+                                            <a class="nav-link" href="#">Contact</a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ path('dashboarduser') }}">Dashboard</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Send money <i
+                                                        class="fal fa-angle-down"></i></a>
+                                            <ul class="sub-menu">
+                                                <li><a href="{{ path('historyuser') }}">History</a></li>
+                                                <li><a href="{{ path('customer_sendmoney') }}">Send</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Account <i
+                                                        class="fal fa-angle-down"></i></a>
+                                            <ul class="sub-menu">
+                                                <li><a href="{{ path('profil') }}">Profil</a></li>
+                                                <li><a href="{{ path('profil') }}">change password</a></li>
+                                            </ul>
+                                        </li>
+                                        {% else %}
+                                            <li class="nav-item {% if app.request.attributes.get( '_route' ) starts with 'app_about' %} active{% else %}  {% endif%}">
+                                                <a class="nav-link" href="#">About</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="#">Contact</a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="#">Faqs</a>
+                                            </li>
                                     {% endif %}
                                 </ul>
                             </div> <!-- navbar collapse -->

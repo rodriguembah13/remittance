@@ -7,6 +7,7 @@ use App\Repository\CustomerRepository;
 use App\Repository\UserRepository;
 use App\Service\paiement\EkolopayService;
 use App\Service\paiement\FlutterwaveService;
+use App\Service\paiement\TransferzeroService;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -26,6 +27,7 @@ class PaymentApiController extends AbstractFOSRestController
     private $souscriptionRepository;
     private $bouquetRepository;
     private $flutterService;
+    private $transfertzeroService;
 
     /**
      * PaymentApiController constructor.
@@ -35,7 +37,8 @@ class PaymentApiController extends AbstractFOSRestController
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(FlutterwaveService $flutterwaveService,UserRepository $userRepository,
-                                LoggerInterface $logger,EkolopayService $ekolopayService,CustomerRepository $customerRepository,
+                                LoggerInterface $logger,TransferzeroService $transferzeroService,
+                                EkolopayService $ekolopayService,CustomerRepository $customerRepository,
 
                                 EntityManagerInterface $entityManager)
     {
@@ -45,6 +48,7 @@ class PaymentApiController extends AbstractFOSRestController
         $this->doctrine=$entityManager;
         $this->customerRepository=$customerRepository;
         $this->flutterService=$flutterwaveService;
+        $this->transfertzeroService=$transferzeroService;
     }
 
     /**
@@ -75,6 +79,14 @@ class PaymentApiController extends AbstractFOSRestController
         }
         $this->doctrine->flush();
         return new JsonResponse([], 200);
+    }
+    /**
+     * @Rest\Post("/v1/sendtransfertzero/ajax", name="sendtransfertzeropay", methods={"POST"})
+     */
+    public function sendtransfertzeropay(Request $request): Response
+    {
+        $response=$this->transfertzeroService->postpaiement([]);
+        return new JsonResponse($response, 200);
     }
     /**
      * @Rest\Post("/v1/sendpaiementekolo/ajax", name="sendpaiementekolopay", methods={"POST"})

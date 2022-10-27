@@ -12,6 +12,7 @@ use App\Repository\GatewayMethodRepository;
 use App\Repository\PaymentRepository;
 use App\Repository\SourcefundsRepository;
 use App\Repository\SourcepurposeRepository;
+use App\Service\paiement\TransferzeroService;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -39,6 +40,7 @@ class AgentToolsController extends AbstractController
     private $paymentRepository;
     private $gatewayRepository;
     private $configurationRepository;
+    private $transfertzeroService;
 
     /**
      * ManagerAgentController constructor.
@@ -52,7 +54,11 @@ class AgentToolsController extends AbstractController
      * @param LoggerInterface $logger
      * @param DataTableFactory $dataTableFactory
      */
-    public function __construct(ConfigurationRepository $configurationRepository,GatewayMethodRepository $gatewayRepository,PaymentRepository $paymentRepository,AgentRepository $agentRepository,SourcefundsRepository $sourcefundRepository,SourcepurposeRepository $sourcepurposeRepository,CountryRepository $countryRepository,LoggerInterface $logger, DataTableFactory $dataTableFactory)
+    public function __construct(ConfigurationRepository $configurationRepository,
+                                GatewayMethodRepository $gatewayRepository,
+                                PaymentRepository $paymentRepository,TransferzeroService $transferzeroService,
+                                AgentRepository $agentRepository,SourcefundsRepository $sourcefundRepository,
+                                SourcepurposeRepository $sourcepurposeRepository,CountryRepository $countryRepository,LoggerInterface $logger, DataTableFactory $dataTableFactory)
     {
         $this->logger = $logger;
         $this->dataTableFactory = $dataTableFactory;
@@ -63,6 +69,7 @@ class AgentToolsController extends AbstractController
         $this->paymentRepository=$paymentRepository;
         $this->gatewayRepository=$gatewayRepository;
         $this->configurationRepository=$configurationRepository;
+        $this->transfertzeroService=$transferzeroService;
     }
     /**
      * @Route("/transaction/", name="app_agent_transaction_history")
@@ -380,12 +387,34 @@ class AgentToolsController extends AbstractController
         $transaction->setSourcefund($source_found);
         $transaction->setSourcepurpose($source_puporse);
         $transaction->setStatus(Payment::PENDING);
+        $data=[
+            'sender_firstname'=>$sender->getName(),
+            'sender_lastname'=>$sender->getName(),
+            'sender_countrycode'=>$from->getFlag(),
+            'sender_phone'=>$sender->getPhone(),
+            'sender_city'=>$sender->getAddress(),
+            'sender_street'=>"rue conti",
+            'sender_codepostal'=>'70587',
+            'sender_birthdate'=>"1974-12-24",
+            'receiver_currency'=>"XOF",
+            'reference'=>$transaction->getReference(),
+            'receiver_phone'=>"+221123456700",
+            'receiver_amount'=>$amount_to,
+            'receiver_firstname'=>'',
+            'receiver_lastname'=>'',
+            'receiver_bankaccount'=>'',
+            'receiver_bankcode'=>'',
+            'receiver_banktype'=>'20',
+            'payout_type'=>'',
+        ];
 
+        $response=$this->transfertzeroService->postcollection($data);
         $entityManager->persist($transaction);
         $entityManager->flush();
 
         return new JsonResponse([
-            'id' => $transaction->getId()
+            'id' => $transaction->getId(),
+            'response'=>$response
         ], "200");
     }
     /**
