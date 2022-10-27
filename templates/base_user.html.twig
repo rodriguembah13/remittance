@@ -1,83 +1,132 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
+    <!--====== Required meta tags ======-->
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %}Remittance{% endblock %}</title>
     {% block stylesheets %}
-        <link href="{{ asset('assets/css/core.css') }}" rel="stylesheet">
+        <!--====== Bootstrap css ======-->
+        <link rel="stylesheet" href="{{ asset('assets/front/css/bootstrap.min.css') }}">
+        <!--====== Fontawesome css ======-->
+        <link rel="stylesheet" href="{{ asset('assets/front/css/all.css') }}">
         <link href="{{ asset('assets/css/select2.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/css/feather-icons/feather.min.css') }}">
-        <link rel="stylesheet"
-              href="{{ asset('assets/datatable/DataTables-1.10.24/css/dataTables.bootstrap4.min.css') }}">
+        <!--====== nice select css ======-->
+        <link rel="stylesheet" href="{{ asset('assets/front/css/nice-select.css') }}">
+
+        <!--====== Default css ======-->
+        <link rel="stylesheet" href="{{ asset('assets/front/css/default.css') }}">
+
+        <!--====== Style css ======-->
+        <link rel="stylesheet" href="{{ asset('assets/front/css/style.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/flag-icon-css/css/flag-icon.min.css') }}">
     {% endblock %}
 
 
 </head>
-<body class="navbar-dark sidebar-dark">
-<div class="main-wrapper">
-    {% include '_partials/_sidebar.html.twig' %}
-    {# {% include '_partials/_hearder.html.twig' %}#}
-    <div class="page-wrapper">
-        {% include '_partials/_hearder.html.twig' %}
-        <div class="page-content">
-            {% block breadcrumb %}
-            {% endblock %}
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success alert-dismissible fade show">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-            {% endfor %}
-            {% for message in app.flashes('error') %}
-                <div class="alert alert-danger alert-dismissible fade show">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-            {% endfor %}
-            {% block body %}
-
-            {% endblock %}
-            <!-- End of Main Content -->
+<body>
+{% include '_partials/_header_user.html.twig' %}
+<div class="page-content">
+    {% block breadcrumb %}
+    {% endblock %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-        {% include '_partials/_footer.html.twig' %}
-    </div>
+
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+    {% endfor %}
+    {% block body %}
+
+    {% endblock %}
+    <!-- End of Main Content -->
 </div>
+<!--====== FOOTER PART START ======-->
+
+<footer class="footer-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="footer-list mt-30">
+                    <h4 class="title">AGENSIC</h4>
+                    <p>We are a FIN-TECH agency based in Congo </p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="footer-list mt-30">
+                    <h4 class="title">Menu</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="footer-list mt-30">
+                    <h4 class="title">legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="footer-list mt-30">
+                    <h4 class="title">Newsletter</h4>
+                    <form action="#">
+                        <div class="input-box">
+                            <input type="text" placeholder="Email Address">
+                            <button><i class="fal fa-arrow-right"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="footer-copyright d-flex justify-content-sm-between justify-content-center align-items-center">
+                    <p>© AGENSIC SARL</p>
+                    <ul>
+                        <li><a href="#"><i class="fab fa-facebook-square"></i></a></li>
+                        <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fab fa-linkedin"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<!--====== scroll_up PART START ======-->
+
+<a id="scroll_up"><i class="far fa-angle-up"></i></a>
+
+<!--====== scroll_up PART ENDS ======-->
 {% block javascripts %}
-    <script src="{{ asset('assets/js/core.js') }}"></script>
-    <script src="{{ asset('assets/js/template.js') }}"></script>
+    <script src="{{ asset('assets/front/js/modernizr-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('assets/front/js/jquery-1.12.4.min.js') }}"></script>
+    <script src="{{ asset('assets/front/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/front/js/popper.min.js') }}"></script>
+  {#  <script src="{{ asset('assets/front/js/jquery.nice-select.min.js') }}"></script>#}
     <script src="{{ asset('assets/js/select2.min.js') }}"></script>
-    <script src="{{ asset('assets/js/feather-icons/feather.min.js') }}"></script>
-    <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
-    <script src="{{ asset('assets/datatable/datatables.min.js') }}"></script>
-    <script src="{{ asset('assets/datatable/DataTables-1.10.24/js/dataTables.bootstrap4.min.js') }}"></script>
-    <script>
+    <script src="{{ asset('assets/front/js/main.js') }}"></script>
+ <script>
         $(document).ready(function () {
-            $(".selectpicker").select2(
-            );
-            //Initialize Select2 Elements
-            $('.select2').select2()
-            if ($(".js-example-basic-single").length) {
-                $(".js-example-basic-single").select2();
-            }
-            if ($(".js-example-basic-multiple").length) {
-                $(".js-example-basic-multiple").select2();
-            }
-            //Initialize Select2 Elements
-            $('.select2bs4').select2({
-                theme: 'bootstrap4'
-            })
+
         });
     </script>
 {% endblock %}

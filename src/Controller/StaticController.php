@@ -13,6 +13,7 @@ use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\Column\TwigColumn;
 use Omines\DataTablesBundle\DataTableFactory;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -49,6 +50,14 @@ class StaticController extends AbstractController
     public function configuration(Request $request): Response
     {
         $configuration=$this->configurationRepository->findOneByLast();
+        if ($request->getMethod()=='POST'){
+            $configuration->setPercentcommision($request->get('percentcommision'));
+            $configuration->setFixedcommission($request->get('fixedcommission'));
+            $configuration->setCurrency($request->get('currency'));
+            $configuration->setSymbole($request->get('symbole'));
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->flush();
+        }
         return $this->render('static/configuration.html.twig', [
             'configuration' => $configuration
         ]);
@@ -60,12 +69,14 @@ class StaticController extends AbstractController
     public function index(Request $request): Response
     {
         $table = $this->dataTableFactory->create()
-            ->add('country', TextColumn::class, [
-                'field' => 'country.name'
-            ])
-            ->add('flag', TextColumn::class, [
-                'field' => 'country.flag'
-            ])
+            ->add('flag', TwigColumn::class, [
+                'className' => 'buttons',
+                'label' => 'Country',
+                'template' => 'static/flag.html.twig',
+                'render' => function ($value, $context) {
+                    return $value;
+                }, ])
+
             ->add('currency', TextColumn::class, [
                 'field' => 'country.currency'
             ])
@@ -78,10 +89,11 @@ class StaticController extends AbstractController
                 'className' => 'buttons',
                 'label' => 'status',
                 'render' => function ($value, $context) {
+                    $url = $this->generateUrl('app_static_changestatuscountry', ['id' => $context->getId()]);
                     if ($value) {
-                        return '<a class="btn btn-sm btn-success">Enable</a>';
+                        return '<a class="btn btn-sm btn-success"  href='.$url.'>Enable</a>';
                     }else {
-                        return '<a class="btn btn-sm btn-warning">Disabled</a>';
+                        return '<a class="btn btn-sm btn-warning" href='.$url.'>Disabled</a>';
                     }
                 }])
             ->add('id', TextColumn::class, [
@@ -103,7 +115,8 @@ class StaticController extends AbstractController
             return $table->getResponse();
         }
         return $this->render('static/index.html.twig', [
-            'datatable' => $table
+            'datatable' => $table,
+            'configuration'=>$this->configurationRepository->findOneByLast(),
         ]);
     }
     /**
@@ -690,7 +703,8 @@ class StaticController extends AbstractController
         }
 
         return $this->render('static/editcountry.html.twig', [
-            'country' => $country
+            'country' => $country,
+            'configuration'=>$this->configurationRepository->findOneByLast(),
         ]);
     }
     /**
@@ -812,7 +826,8 @@ class StaticController extends AbstractController
         }
 
         return $this->render('static/editgatewaymethod.html.twig', [
-            'gatewaymethod' => $gatewaymethod
+            'gatewaymethod' => $gatewaymethod,
+            'configuration'=>$this->configurationRepository->findOneByLast(),
         ]);
     }
     /**
@@ -827,7 +842,22 @@ class StaticController extends AbstractController
         }
 
         return $this->render('static/editdeposit.html.twig', [
-            'deposit' => $deposit
+            'deposit' => $deposit,
+            'configuration'=>$this->configurationRepository->findOneByLast(),
         ]);
+    }
+    /**
+     * @Route("changestatuscountry/{id}", name="app_static_changestatuscountry", methods={"GET","POST"})
+     */
+    public function changestatuscountry(Request $request, Country $country): Response
+    {
+        if ($country->getStatus()==1.0){
+            $country->setStatus(0.0);
+        }else{
+            $country->setStatus(1.0);
+        }
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->flush();
+      return  $this->redirectToRoute('app_static_country');
     }
 }

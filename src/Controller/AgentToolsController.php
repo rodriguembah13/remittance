@@ -6,6 +6,7 @@ use App\Entity\Deposit;
 use App\Entity\Payment;
 use App\Entity\SenderReceiver;
 use App\Repository\AgentRepository;
+use App\Repository\ConfigurationRepository;
 use App\Repository\CountryRepository;
 use App\Repository\GatewayMethodRepository;
 use App\Repository\PaymentRepository;
@@ -37,9 +38,13 @@ class AgentToolsController extends AbstractController
     private $agentRepository;
     private $paymentRepository;
     private $gatewayRepository;
+    private $configurationRepository;
 
     /**
      * ManagerAgentController constructor.
+     * @param ConfigurationRepository $configurationRepository
+     * @param GatewayMethodRepository $gatewayRepository
+     * @param PaymentRepository $paymentRepository
      * @param AgentRepository $agentRepository
      * @param SourcefundsRepository $sourcefundRepository
      * @param SourcepurposeRepository $sourcepurposeRepository
@@ -47,7 +52,7 @@ class AgentToolsController extends AbstractController
      * @param LoggerInterface $logger
      * @param DataTableFactory $dataTableFactory
      */
-    public function __construct(GatewayMethodRepository $gatewayRepository,PaymentRepository $paymentRepository,AgentRepository $agentRepository,SourcefundsRepository $sourcefundRepository,SourcepurposeRepository $sourcepurposeRepository,CountryRepository $countryRepository,LoggerInterface $logger, DataTableFactory $dataTableFactory)
+    public function __construct(ConfigurationRepository $configurationRepository,GatewayMethodRepository $gatewayRepository,PaymentRepository $paymentRepository,AgentRepository $agentRepository,SourcefundsRepository $sourcefundRepository,SourcepurposeRepository $sourcepurposeRepository,CountryRepository $countryRepository,LoggerInterface $logger, DataTableFactory $dataTableFactory)
     {
         $this->logger = $logger;
         $this->dataTableFactory = $dataTableFactory;
@@ -57,6 +62,7 @@ class AgentToolsController extends AbstractController
         $this->agentRepository=$agentRepository;
         $this->paymentRepository=$paymentRepository;
         $this->gatewayRepository=$gatewayRepository;
+        $this->configurationRepository=$configurationRepository;
     }
     /**
      * @Route("/transaction/", name="app_agent_transaction_history")
@@ -188,6 +194,7 @@ class AgentToolsController extends AbstractController
     public function sendmoney(): Response
     {
         return $this->render('agent_tools/send_money.html.twig', [
+            'configuration'=>$this->configurationRepository->findOneByLast(),
             'countries'=>$this->countryRepository->findAll(),
             'sourcefunds'=>$this->sourcefundRepository->findBy(['status'=>true]),
             'sourcepurposes'=>$this->sourcepurposeRepository->findBy(['status'=>true])

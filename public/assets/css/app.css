@@ -1,3 +1,13 @@
+.table td span, .table td p, .table td li {
+    font-size: 0.875rem;
+}
+.table td {
+    font-size: 0.8125rem;
+    color: #5b6e88;
+    text-align: center;
+    font-weight: 500;
+    white-space: nowrap;
+}
 .blob{
     font-weight: bold;
 }

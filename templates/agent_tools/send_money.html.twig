@@ -116,13 +116,13 @@
                         <hr>
                         <p><span class="text-uppercase mb-3">Final amount</span> <span class="float-end blob" id="sumary_final_amout"></span></p>
                         <hr>
-                        <p><span class="text-uppercase mb-3">Payable USD</span> <span class="float-end blob" id="sumary_payable_usd"></span></p>
+                        <p><span class="text-uppercase mb-3">Payable {{ configuration.currency }}</span> <span class="float-end blob" id="sumary_payable_usd"></span></p>
                         <hr>
                     </div>
                     <h3 class="mb-3 send-money-title text-uppercase">Acknowlegement</h3>
 
                     <div class="mb-3">
-                        <label for="message-text" class="form-label">Source founds</label>
+                        <label for="message-text" class="form-label">Source funds</label>
                         <select id="sourcefound" name="sourcefound" class="js-example-basic-single form-select"
                                 data-width="50%">
                             {% for c in sourcefunds %}

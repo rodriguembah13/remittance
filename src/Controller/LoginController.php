@@ -39,8 +39,6 @@ class LoginController extends AbstractController
      */
     public function register(Request $request): Response
     {
-
-
         if ($request->getMethod()=="POST"){
             $entityManager = $this->getDoctrine()->getManager();
             $user = new User();

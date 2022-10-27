@@ -39,7 +39,7 @@ security:
     - { path: ^/auth/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/admin1gre417az87/, roles: ROLE_ADMIN }
     - { path: ^/agent789pmyazed/, roles: ROLE_AGENT }
-    - { path: ^/, roles: ROLE_USER }
+    - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/v1/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
   role_hierarchy:
     ROLE_ADMIN: ROLE_AGENT

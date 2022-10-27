@@ -11,6 +11,7 @@ R|Configuration
                 <h4>Configuration</h4>
             </div>
             <div class="card-body">
+                <form method="post">
                 <div class="row">
                 <div class="col-6 mb-3">
                     <label for="message-text" class="form-label">Currency:</label>
@@ -19,23 +20,24 @@ R|Configuration
                 </div>
                 <div class="col-6 mb-3">
                     <label for="message-text" class="form-label">Symbol:</label>
-                    <input value="{{ configuration.symbole }}" type="text" name="currency" class="form-control"
+                    <input value="{{ configuration.symbole }}" type="text" name="symbole" class="form-control"
                            id="recipient-name">
                 </div>
                 <div class="col-6 mb-3">
                     <label for="message-text" class="form-label">Fixed commision:</label>
-                    <input value="{{ configuration.fixedcommission }}" type="text" name="currency" class="form-control"
+                    <input value="{{ configuration.fixedcommission }}" type="text" name="fixedcommission" class="form-control"
                            id="recipient-name">
                 </div>
                 <div class="col-6 mb-3">
                     <label for="message-text" class="form-label">Fixed percent:</label>
-                    <input value="{{ configuration.percentcommision }}" type="text" name="currency" class="form-control"
+                    <input value="{{ configuration.percentcommision }}" type="text" name="percentcommision" class="form-control"
                            id="recipient-name">
                 </div>
                 </div>
                 <div class="modal-footer">
                    <button type="submit" class="btn btn-primary">Update</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>

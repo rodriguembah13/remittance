@@ -65,9 +65,9 @@
                             <div class="col-6 mb-3">
                                 <label for="message-text" class="form-label">Rate:</label>
                                 <div class="input-group date datepicker" id="datePickerExample">
-                                <span class="input-group-text input-group-addon">1USD=</span>
+                                <span class="input-group-text input-group-addon">1 {{ configuration.currency }}=</span>
                                 <input type="text" name="rate" class="form-control" id="recipient-name">
-                                <span class="input-group-text input-group-addon" id="val_usd">USD</span>
+                                <span class="input-group-text input-group-addon" id="val_usd">{{ configuration.currency }}</span>
                                 </div>
                             </div>
                         </div>

@@ -53,10 +53,10 @@
                             <div class="col-6 mb-3">
                                 <label for="message-text" class="form-label">Rate:</label>
                                 <div class="input-group date datepicker" id="datePickerExample">
-                                    <span class="input-group-text input-group-addon">1USD=</span>
+                                    <span class="input-group-text input-group-addon">1 {{ configuration.currency }}=</span>
                                     <input value="{{ country.rate }}" type="text" name="rate" class="form-control"
                                            id="recipient-name">
-                                    <span class="input-group-text input-group-addon" id="val_usd">USD</span>
+                                    <span class="input-group-text input-group-addon" id="val_usd">{{ configuration.currency }}</span>
                                 </div>
                             </div>
                         </div>
@@ -74,7 +74,7 @@
                                 <div class="input-group date datepicker" id="fixedcharge">
                                     <input value="{{ country.fixedcharged }}" type="text" name="fixedcharge"
                                            class="form-control" id="recipient-name">
-                                    <span class="input-group-text input-group-addon" id="val_usd2">USD</span>
+                                    <span class="input-group-text input-group-addon" id="val_usd2">{{ configuration.currency }}</span>
                                 </div>
                             </div>
                         </div>

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\AgentUser;
 use App\Entity\Customer;
+use App\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\TextColumn;
@@ -200,6 +201,66 @@ class ManagerUserController extends AbstractController
         }
         return $this->render('manager_user/activecustomer.html.twig', [
             'datatable' => $table
+        ]);
+    }
+    /**
+     * @Route("customer/new", name="app_manager_customer_new", methods={"GET","POST"})
+     * @param Request $request
+     * @return Response
+     */
+    public function new(Request $request): Response
+    {
+        if ($request->getMethod() === 'POST') {
+            $user = new User();
+            $user->setName($request->get('name'));
+            $user->setRoles(["ROLE_CUSTOMER"]);
+            $user->setPhone($request->get('phone'));
+            $user->setEmail($request->get('email'));
+            $agent = new Customer();
+            $entityManager = $this->getDoctrine()->getManager();
+            $agent->setStatus(AgentUser::PENDING);
+            $agent->setCountry($request->get('country'));
+            $agent->setBalance(0.0);
+            $agent->setKycverify(false);
+            $encodedPassword = $this->passwordEncoder->hashPassword($user, $request->get('password'));
+            $user->setPassword($encodedPassword);
+            $entityManager->persist($user);
+            $agent->setCompte($user);
+            $entityManager->persist($agent);
+            $entityManager->flush();
+            return $this->redirectToRoute('app_manager_customer_all');
+        }
+
+        return $this->render('manager_user/new.html.twig', [
+
+        ]);
+    }
+
+    /**
+     * @Route("customer/edit/{id}", name="app_manager_customer_edit", methods={"GET","POST"})
+     */
+    public function edit(Request $request, AgentUser $agentUser): Response
+    {
+        if ($request->getMethod() == 'POST') {
+            $entityManager = $this->getDoctrine()->getManager();
+            $user = $agentUser->getCompte();
+            $user->setName($request->get('name'));
+            $user->setPhone($request->get('phone'));
+            $user->setEmail($request->get('email'));
+            $user->setCity($request->get('city'));
+            $user->setAddress($request->get('address'));
+            $user->setState($request->get('state'));
+            $user->setPostal($request->get('postal'));
+            $agentUser->setStatus(AgentUser::PENDING);
+            $agentUser->setCountry($request->get('country'));
+            $agentUser->setKycverify($request->get('kyc'));
+            $entityManager->flush();
+            return $this->redirectToRoute('app_manager_customer_all');
+        }
+
+        return $this->render('manager_user/edit.html.twig', [
+            'agent' => $agentUser
+
         ]);
     }
 }
