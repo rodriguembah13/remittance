@@ -5,18 +5,16 @@ namespace App\Controller;
 use App\Entity\Customer;
 use App\Entity\Payment;
 use App\Entity\SenderReceiver;
+use App\Entity\User;
 use App\Repository\ConfigurationRepository;
 use App\Repository\CountryRepository;
 use App\Repository\CustomerRepository;
+use App\Repository\PaymentRepository;
+use App\Repository\SenderReceiverRepository;
+use App\Repository\SourcefundsRepository;
+use App\Repository\SourcepurposeRepository;
 use App\Service\EndpointService;
 use App\Service\paiement\TransferzeroService;
-use DateTime;
-use DateTimeZone;
-use Doctrine\ORM\QueryBuilder;
-use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
-use Omines\DataTablesBundle\Column\DateTimeColumn;
-use Omines\DataTablesBundle\Column\TextColumn;
-use Omines\DataTablesBundle\Column\TwigColumn;
 use Omines\DataTablesBundle\DataTableFactory;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -38,6 +36,11 @@ class DefaultController extends AbstractController
     private $countryRepository;
     private $logger;
     private $transfertzeroService;
+    private $paiementRepository;
+    private $sourcefundRepository;
+    private $sourcepurposeRepository;
+    private $senderReceiverRepository;
+
 
     /**
      * @param CustomerRepository $customerRepository
@@ -48,7 +51,9 @@ class DefaultController extends AbstractController
      */
     public function __construct(CustomerRepository $customerRepository,ConfigurationRepository $configurationRepository,
                                 CountryRepository $countryRepository,TransferzeroService $transferzeroService,
-                                LoggerInterface $logger,EndpointService $endpointService,
+                                SourcefundsRepository $sourcefundRepository,SenderReceiverRepository $senderReceiverRepository,
+                                SourcepurposeRepository $sourcepurposeRepository,
+                                LoggerInterface $logger,EndpointService $endpointService,PaymentRepository $paymentRepository,
                                 DataTableFactory $dataTableFactory,ParameterBagInterface $parameterBag)
     {
         $this->params = $parameterBag;
@@ -59,6 +64,10 @@ class DefaultController extends AbstractController
         $this->countryRepository=$countryRepository;
         $this->configurationRepository=$configurationRepository;
         $this->transfertzeroService=$transferzeroService;
+        $this->paiementRepository=$paymentRepository;
+        $this->sourcefundRepository=$sourcefundRepository;
+        $this->sourcepurposeRepository=$sourcepurposeRepository;
+        $this->senderReceiverRepository=$senderReceiverRepository;
     }
 
     /**
@@ -144,32 +153,87 @@ class DefaultController extends AbstractController
      */
     public function sendMoneyajax(Request $request): JsonResponse
     {
+        $this->logger->info('{user} is connect');
         $entityManager = $this->getDoctrine()->getManager();
         $from = $this->countryRepository->find($request->get('id_from'));
         $to= $this->countryRepository->find($request->get('id_to'));
         $amount_to=$request->get('amount_to');
         $amount_from=$request->get('amount_from');
         $charge=$request->get('charge');
-        $charge=$request->get('charge');
-        $phone=$request->get('charge');
-        $refer=$request->get('charge');
-        $customer=$this->customerRepository->findOneBy(['compte'=>$this->getUser()]);
+        $payable=$request->get('payable');
+        $receiver=$this->senderReceiverRepository->findOneBy(['name'=>$request->get('receiver_name'),'phone'=>$request->get('receiver_phone')]);
+        if (is_null($receiver)){
+            $receiver=new SenderReceiver();
+            $receiver->setAddress($request->get('receiver_address'));
+            $receiver->setPhone($request->get('receiver_phone'));
+            $receiver->setName($request->get('receiver_name'));
+            $entityManager->persist($receiver);
+        }
+        $user=$this->getUser();
+        $sender=$this->senderReceiverRepository->findOneBy(['name'=>$user->getName(),'phone'=>$user->getPhone()]);
+        if (is_null($sender)){
+            $sender=new SenderReceiver();
+            $sender->setName($user->getName());
+            $sender->setPhone($user->getPhone());
+            $sender->setPhone($user->getAddress());
+            $sender->setCreatedAt(new \DateTime('now'));
+            $entityManager->persist($sender);
+        }
+        $source_puporse=$this->sourcepurposeRepository->find($request->get('send_puporse'));
+        $source_found=$this->sourcefundRepository->find($request->get('source_fund'));
+        $customer=$this->customerRepository->findOneBy(['compte'=>$user]);
+        if (is_null($customer)){
+            $customer=new Customer();
+            $customer->setCompte($user);
+            $entityManager->persist($customer);
+        }
+        $transaction=new Payment();
+        $transaction->setReference($this->generatereference());
+        $transaction->setCountryfrom($from);
+        $transaction->setCountry($to);
+        $transaction->setAmount($amount_from);
+        $transaction->setAmountreceive($amount_to);
+        $transaction->setRate($charge);
+        $transaction->setSender($sender);
+        $transaction->setReceiver($receiver);
+        $transaction->setCreatedby($user);
+        $transaction->setSourcefund($source_found);
+        $transaction->setSourcepurpose($source_puporse);
+        $transaction->setStatus(Payment::PENDING);
         $data=[
-          'sender_firstname'=>$customer->getCompte()->getName(),
+            'sender_firstname'=>$customer->getCompte()->getName(),
             'sender_lastname'=>$customer->getCompte()->getName(),
-            'sender_countrycode'=>$from->getCode(),
+            'sender_countrycode'=>$from->getFlag(),
             'sender_phone'=>$customer->getCompte()->getPhone(),
-            'sender_city'=>$customer->getCompte()->getAddress(),
-            'sender_street'=>"",
-            'sender_codepostal'=>$customer->getCompte()->getPostal(),
-            'sender_birthdate'=>"",
+            'sender_city'=>is_null($customer->getCompte()->getAddress())?"DOHA":$customer->getCompte()->getAddress(),
+            'sender_street'=>"your-street",
+            'sender_codepostal'=>is_null($customer->getCompte()->getPostal())?'70007':$customer->getCompte()->getPostal(),
+            'sender_birthdate'=>"1988-12-12",
+            'sender_currency'=>$from->getCurrency(),
             'receiver_currency'=>$to->getCurrency(),
-            'reference'=>"",
-            'receiver_phone'=>$phone,
-            'receiver_amount'=>$amount_to,
+            'reference'=>$transaction->getReference(),
+            'receiver_phone'=>$receiver->getPhone(),
+            'receiver_name'=>$receiver->getName(),
+            'receiver_amount'=>$payable,
+            'payout_type'=>$request->get('method_payment'),
+            'receiver_mobile_provider'=>"orange",
+            'receiver_country'=>$to->getFlag(),
+            'method_payment'=>$request->get('method_payment'),
+            'method_type'=>$request->get('method_type'),
+            'method_uxflow'=>"ussd_voucher",
+            'receiver_bankaccount'=>$request->get('bank_account'),
+            'receiver_bankcode'=>$request->get('bank_code'),
+            'receiver_banktype'=>$request->get('bank_account_type'),
+            'receiver_bankiban'=>$request->get('bank_iban'),
         ];
+        if ($data['method_type']==="bank"){
+            $response=$this->transfertzeroService->postcollectionOut($data);
+        }else{
+            $response=$this->transfertzeroService->postcollection($data);
+        }
 
-        $response=$this->transfertzeroService->postcollection($data);
+        $entityManager->persist($transaction);
+        $entityManager->flush();
         return new JsonResponse([
            $response
         ], "200");
@@ -227,13 +291,14 @@ class DefaultController extends AbstractController
         ]);
     }
     /**
-     * @Route("/history", name="historyuser")
+     * @Route("/history", name="historyuser",options={"expose"=true})
      * @param Request $request
      * @return Response
      */
     public function historySendin(Request $request): Response
     {
         return $this->render('default/historyuser.html.twig', [
+            'transactions'=>$this->paiementRepository->findBy(['createdby'=>$this->getUser()]),
             'configuration'=>$this->configurationRepository->findOneByLast(),
             'countries'=>$this->countryRepository->findAll(),
         ]);
@@ -248,6 +313,8 @@ class DefaultController extends AbstractController
         return $this->render('default/sendmoney.html.twig', [
             'configuration'=>$this->configurationRepository->findOneByLast(),
             'countries'=>$this->countryRepository->findAll(),
+            'sourcefunds'=>$this->sourcefundRepository->findBy(['status'=>true]),
+            'sourcepurposes'=>$this->sourcepurposeRepository->findBy(['status'=>true])
         ]);
     }
     /**
@@ -261,5 +328,31 @@ class DefaultController extends AbstractController
             'configuration'=>$this->configurationRepository->findOneByLast(),
             'countries'=>$this->countryRepository->findAll(),
         ]);
+    }
+    private function generatereference(){
+        $numero = $this->generateNumero();
+        $date = new \DateTime('now');
+        $month = $date->format('m');
+        $year = $date->format('Y');
+        $day = $date->format('d');
+        $text = "RMT" . $day . $month . $year . $numero;
+        return $text;
+    }
+    private function generateNumero()
+    {
+        $last = null;
+        if (null == $this->paiementRepository->findOneByLast()) {
+            $last = 0;
+        } else {
+            $last = $this->paiementRepository->findOneByLast()->getId();
+        }
+        $transaction_numero = '';
+        $allowed_characters = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
+        for ($i = 1; $i <= 8; $i++) {
+            $transaction_numero .= $allowed_characters[rand(0, count($allowed_characters) - 1)];
+        }
+
+        $txt = $transaction_numero . ($last + 1);
+        return str_pad($txt, 4, 0, STR_PAD_LEFT);
     }
 }

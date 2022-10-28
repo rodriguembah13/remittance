@@ -1,0 +1,71 @@
+[{
+  "country": "USD",
+  "method": [
+    {
+      "name": "USD::Bank",
+      "value": "bank"
+    }
+  ]
+},
+  {
+    "country": "XOF",
+    "method": [
+      {
+        "name": "XOF::Mobile",
+        "value": "mobile"
+      },
+      {
+        "name": "XOF::Bank",
+        "value": "bank"
+      }
+    ]
+  },
+  {
+    "country": "XAF",
+    "method": [
+      {
+        "name": "XAF::Mobile",
+        "value": "mobile"
+      },
+      {
+        "name": "XAF::Bank",
+        "value": "bank"
+      }
+    ]
+  },
+  {
+    "country": "EUR",
+    "method": [
+      {
+        "name": "EUR::Bank",
+        "value": "bank"
+      }
+    ]
+  },
+  {
+    "country": "GHS",
+    "method": [
+      {
+        "name": "GHS::Mobile",
+        "value": "mobile"
+      },
+      {
+        "name": "GHS::Bank",
+        "value": "bank"
+      }
+    ]
+  },
+  {
+    "country": "NGN",
+    "method": [
+      {
+        "name": "NGN::Mobile",
+        "value": "mobile"
+      },
+      {
+        "name": "NGN::Bank",
+        "value": "bank"
+      }
+    ]
+  }
+]

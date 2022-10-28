@@ -1,5 +1,40 @@
 .banner-box{border-radius:4px;background-color:rgba(39,17,86,0.6);padding:40px 60px}@media (max-width: 767px){.banner-area.banner-2-area .banner-box{padding:40px 10px}}@media only screen and (min-width: 576px) and (max-width: 767px){.banner-area.banner-2-area .banner-box{padding:40px 50px}}.banner-area.banner-2-area .banner-box .title{font-size:30px;font-weight:500;color:#fff;padding-top:24px;padding-bottom:8px}@media only screen and (min-width: 992px) and (max-width: 1200px){.banner-area.banner-2-area .banner-box .title{font-size:28px}}.banner-area.banner-2-area .banner-box a{margin-top:16px;padding:0 60px;margin-bottom:32px}@media (max-width: 767px){.banner-area.banner-2-area .banner-box a{width:100%}}.banner-area.banner-2-area .banner-box ul li{display:inline-block;margin:0 8px;font-size:20px;color:#6c5797}
-
+.form-control{
+	height: 40px !important;
+}
+.hide{
+	display: none;
+}
+.sending-btn {
+	display: inline-block;
+	font-weight: 700;
+	text-align: center;
+	white-space: nowrap;
+	text-transform: uppercase;
+	vertical-align: middle;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	border: 0px;
+	border-bottom-color: currentcolor;
+	border-bottom-style: none;
+	border-bottom-width: 0px;
+	padding: 0 32px;
+	font-size: 14px;
+	line-height: 50px;
+	color: #fff !important;
+	cursor: pointer;
+	z-index: 5;
+	-webkit-transition: all .4s ease-out 0s;
+	transition: all .4s ease-out 0s;
+	border-radius: 4px;
+    background-position-x: 0%;
+	background-position-y: 0%;
+	background-size: auto;
+	background-size: 200% auto;
+	letter-spacing: 1px;
+}
 .select2-container .select2-selection--single {
 	box-sizing: border-box;
 	cursor: pointer;
@@ -31,6 +66,34 @@
 }
 .error-area {
 	height: auto !important;
+}
+.send-money-title {
+	font-size: 15px;
+	color: #bd2c00 !important;
+	display: flex;
+	margin: 20px 0px;
+}
+
+.send-money-title:before {
+	content: "";
+	background-image: linear-gradient(#bbb8b8, #f3f3f3);
+	flex-grow: 1;
+	background-size: calc(100% - 20px) 1px;
+	background-repeat: no-repeat;
+}
+.send-money-title:after {
+	content: "";
+	background-image: linear-gradient(#bbb8b8, #f3f3f3);
+	flex-grow: 1;
+	background-size: calc(100% - 20px) 1px;
+	background-repeat: no-repeat;
+}
+.send-money-title:before {
+	background-position: center left;
+}
+
+.send-money-title:after {
+	background-position: center right;
 }
 /* Deafult Margin & Padding */
 /*-- Margin Top --*/

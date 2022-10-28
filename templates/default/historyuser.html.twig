@@ -14,8 +14,42 @@
 {% block body %}
     <section class="banner-area d-block d-md-flex align-items-center"
              style="background-image:  url({{ asset('assets/front/images/banner-bg.png') }});">
-        <div class="container">
+    </section>
 
+    <section class="ico-sale-area pt-100 pb-100">
+        <div class="container">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    List transactions
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <td>Transaction N°</td>
+                            <td>Reciepient</td>
+                            <td>Amount send</td>
+                            <td>Rate</td>
+                            <td>Status</td>
+                            <td>Action</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.reference }}</td>
+                            <td>{{ transaction.receiver.name }}</td>
+                            <td>{{ transaction.amount }}</td>
+                            <td>{{ transaction.rate }}</td>
+                            <td>{{ transaction.status }}</td>
+                            <td></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
         </div>
     </section>
 {% endblock %}

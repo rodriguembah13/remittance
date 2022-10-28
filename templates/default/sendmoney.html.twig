@@ -15,72 +15,168 @@
     <section class="banner-area  d-block d-md-flex align-items-center"
              style="background-image:  url({{ asset('assets/front/images/banner-bg.png') }});">
     </section>
-        <section class="ico-sale-area pt-100 pb-100 justify-content-center">
-            <div class="col-md-10 justify-content-center">
-                <div class="card">
-                    <div class="card-header bg-primary">
+    <section class="ico-sale-area pt-30 pb-100">
+        <div class="row justify-content-center">
+        <div class="col-md-8 justify-content-center">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Send money
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="message-text" class="form-label">You send:</label>
+                            <div class="input-group" id="datePickerExample">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"> <span id="flag_before" class=""></span></span>
+                                </div>
+                                <div class="input-group-prepend">
+                                    <select id="country_from" name="country_from"
+                                            class="input-group-prepend"
+                                            data-width="100%">
+                                        {% for c in countries %}
+                                            <option data-id="{{ c.id }}" data-charge="{{ c.percentcharge }}"
+                                                    data-rate="{{ c.rate }}"
+                                                    data-value="{{ c.currency }}" value="{{ c.flag|lower }}"><span
+                                                        class="flag-text">{{ c.name|upper }}</span></option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <input min="0.0" type="number" name="from_rate" class="form-control"
+                                       id="from-rate">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="form-label">Recipient gets:</label>
+                            <div class="input-group" id="datePickerExample">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"> <span id="flag_after" class=""></span></span>
+                                </div>
+                                <div class="input-group-prepend">
+                                    <select id="country" name="country"
+                                            class="input-group-text js-example-basic-single form-select"
+                                            data-width="100%">
+                                        {% for c in countries %}
+                                            <option data-id="{{ c.id }}" data-rate="{{ c.rate }}"
+                                                    data-charge="{{ c.percentcharge }}"
+                                                    data-value="{{ c.currency }}"
+                                                    value="{{ c.flag|lower }}">{{ c.name|upper }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <input type="number" min="0.0" name="to_rate" class="form-control"
+                                       id="to-rate">
+                            </div>
+                        </div>
+                        <h6 class="mt-3 send-money-title">RECIPIENT INFORMATION</h6>
+                        <div class=" mb-3">
+                            <label for="message-text" class="form-label">Reciepient name:</label>
+                            <input type="text" name="rate" class="form-control"
+                                   id="receiver_name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="form-label">Reciepient Mobil:</label>
+                            <div class="input-group" id="datePickerExample">
+                            <input type="text" name="rate" class="form-control"
+                                   id="receiver_phone">
+                            </div>
+                            <span id="output" class="hide"></span>
+                            <span id="valid-msg" class="hide">✓ Valid</span>
+                            <span id="error-msg" class="hide"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="form-label">Reciepient Adress:</label>
+                            <input type="text" name="rate" class="form-control"
+                                   id="receiver_address">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="message-text" class="form-label">Source funds</label>
+                            <select id="sourcefound" name="sourcefound" class="form-control form-select"
+                                    data-width="50%">
+                                {% for c in sourcefunds %}
+                                    <option value="{{ c.id }}"><span class="flag-text">{{ c.name|capitalize }}</span>
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="form-label">Sending puporse</label>
+                            <select id="sourcepurpose" name="sourcepurpose" class="form-control form-select"
+                                    data-width="50%">
+                                {% for c in sourcepurposes %}
+                                    <option value="{{ c.id }}"><span class="flag-text">{{ c.name|capitalize }}</span>
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
+                        <div class="list">
+                            <ul class="ml-2">
+                                <li class="text-uppercase mb-3">Total charge <span class="text-success"
+                                                                                   id="from_amount"></span>: <span
+                                            class="float-right blob" id="sumary_total_charge"></span></li>
+                                <li class="text-uppercase mb-3">Final amount <span class="text-success"
+                                                                                   id="sumary_currency"></span>: <span
+                                            class="float-right blob" id="sumary_final_amout"></span></li>
+                                <li class="text-uppercase mb-3">Payable: <span
+                                            class="text-warning">{{ configuration.currency }}</span> <span
+                                            class="float-right blob" id="sumary_payable_usd"></span></li>
+                            </ul>
+                        </div>
+                        <h6 class="mt-3 send-money-title">PAYMENT VIA </h6>
+                        <div class="form-check mb-3 form-check-warning">
+                            <input class="form-check-input" name="paiement" type="radio" value="wallet" id="customckeck4" checked>
+                            <label class="form-check-label" for="customckeck4">WALLET</label>
+                        </div>
+
+                        <div class="form-check mb-3 form-check-pink">
+                            <input class="form-check-input" name="paiement" type="radio" value="directpayment" id="customckeck5">
+                            <label class="form-check-label" for="customckeck5">DIRECT PAYMENT</label>
+                        </div>
+                        <div class="row" id="driectpayement">
+                            <div class="col-md-12 mb-3">
+                                <label for="message-text" class="form-label">Method payment</label>
+                                <select id="methodpayment" name="methodpayment" class="form-control form-select"
+                                        data-width="100%">
+                                </select>
+                            </div>
+                            <div class="row" id="bank_method">
+                            <div class="col-md-6 mb-3">
+                                <label for="message-text" class="form-label">IBAN:</label>
+                                <input type="text" name="rate" class="form-control"
+                                       id="bank_iban">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="message-text" class="form-label">BANK CODE:</label>
+                                <input type="text" name="rate" class="form-control"
+                                       id="bank_code">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="message-text" class="form-label">BANK ACOUNT:</label>
+                                <input type="text" name="rate" class="form-control"
+                                       id="bank_account">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="message-text" class="form-label">BANK ACCOUNT TYPE:</label>
+                                <input type="text" name="rate" class="form-control"
+                                       id="bank_account_type">
+                            </div>
+                            </div>
+                        </div>
+
+                        <div class="row justify-content-center">
+                            <button type="button" id="submit_send" class="btn btn-primary btn-block sending-btn">Send money</button>
+                        </div>
                     </div>
-                    <div class="card-body">
-            <div class="row">
-                <div class="col-12 mb-3">
-                    <label for="message-text" class="form-label">You send:</label>
-                    <div class="input-group" id="datePickerExample">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"> <span  id="flag_before" class=""></span></span>
-                        </div>
-                        <div class="input-group-prepend">
-                            <select id="country_from" name="country_from"
-                                    class="input-group-prepend"
-                                    data-width="100%">
-                                {% for c in countries %}
-                                    <option data-id="{{ c.id }}" data-charge="{{ c.percentcharge }}"
-                                            data-rate="{{ c.rate }}"
-                                            data-value="{{ c.currency }}" value="{{ c.flag|lower }}"><span
-                                                class="flag-text">{{ c.name|lower }}</span></option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <input min="0.0" type="number" name="from_rate" class="form-control"
-                               id="from-rate">
                     </div>
-                </div>
-                <div class="col-12 mb-3">
-                    <label for="message-text" class="form-label">Recipient gets:</label>
-                    <div class="input-group" id="datePickerExample">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"> <span id="flag_after" class=""></span></span>
-                        </div>
-                        <div class="input-group-prepend">
-                            <select id="country" name="country"
-                                    class="input-group-text js-example-basic-single form-select"
-                                    data-width="100%">
-                                {% for c in countries %}
-                                    <option data-id="{{ c.id }}" data-rate="{{ c.rate }}" data-charge="{{ c.percentcharge }}"
-                                            data-value="{{ c.currency }}" value="{{ c.flag|lower }}">{{ c.name|lower }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <input type="number" min="0.0" name="to_rate" class="form-control"
-                               id="to-rate">
-                    </div>
+
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-10 list">
-                    <ul class="ml-20">
-                        <li class="text-uppercase mb-3">Total charge <span class="text-success" id="from_amount"></span>: <span class="float-right blob" id="sumary_total_charge"></span></li>
-                        <li class="text-uppercase mb-3">Final amount <span class="text-success" id="sumary_currency"></span>: <span class="float-right blob" id="sumary_final_amout"></span></li>
-                        <li class="text-uppercase mb-3">Payable: <span class="text-warning" >{{ configuration.currency }}</span> <span class="float-right blob" id="sumary_payable_usd"></span></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="row justify-content-center">
-                <button type="button" id="submit_send" class="btn btn-primary">Send money</button>
-            </div>
-                    </div>
-                </div>
-            </div>
+        </div>
+        </div>
 
     </section>
 {% endblock %}
@@ -88,7 +184,78 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
+        var input = document.querySelector("#receiver_phone");
+        var iti =   window.intlTelInput(input, {
+            // allowDropdown: false,
+            // autoHideDialCode: false,
+            // autoPlaceholder: "off",
+             dropdownContainer: document.body,
+            // excludeCountries: ["us"],
+            // formatOnDisplay: false,
+            // geoIpLookup: function(callback) {
+            //   $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+            //     var countryCode = (resp && resp.country) ? resp.country : "";
+            //     callback(countryCode);
+            //   });
+            // },
+             hiddenInput: "full_number",
+            // initialCountry: "auto",
+            // localizedCountries: { 'de': 'Deutschland' },
+            // nationalMode: false,
+            // onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+            // placeholderNumberType: "MOBILE",
+            // preferredCountries: ['cn', 'jp'],
+            separateDialCode: true,
+            utilsScript: "assets/intl/utils.js",
+        });
+            errorMsg = document.querySelector("#error-msg"),
+            validMsg = document.querySelector("#valid-msg");
+
+        // here, the index maps to the error code returned from getValidationError - see readme
+        var errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
+        var reset = function() {
+            input.classList.remove("error");
+            errorMsg.innerHTML = "";
+            errorMsg.classList.add("hide");
+            validMsg.classList.add("hide");
+            var text = (iti.isValidNumber()) ? "" + iti.getNumber() : "Please enter a number below";
+            var textNode = document.createTextNode(text);
+            output.innerHTML = "";
+            output.appendChild(textNode);
+        };
+        // on blur: validate
+        input.addEventListener('blur', function() {
+            reset();
+            if (input.value.trim()) {
+                if (iti.isValidNumber()) {
+                    validMsg.classList.remove("hide");
+                } else {
+                    input.classList.add("error");
+                    var errorCode = iti.getValidationError();
+                    errorMsg.innerHTML = errorMap[errorCode];
+                    errorMsg.classList.remove("hide");
+                }
+            }
+        });
+
+        // on keyup / change flag: reset
+        input.addEventListener('change', reset);
+        input.addEventListener('keyup', reset);
+    </script>
+    <script>
         $(function () {
+
+            function parseJson(country,json) {
+                var data=json.filter(function (e) {
+                    return e.country === country;
+                });
+                console.log(country)
+                $('#methodpayment').html('');
+                $('#methodpayment').append('<option value="">Select method</option>')
+                for (let i = 0; i < data[0]['method'].length; i++) {
+                    $('#methodpayment').append('<option data-name="'+data[0]['method'][i].name+'" value="'+data[0]['method'][i].value+'">'+data[0]['method'][i].name+'</option>')
+                }
+            }
             function formatCountry(country) {
                 if (!country.id) {
                     return country.text;
@@ -125,9 +292,9 @@
                     type: "GET",
                     dataType: "JSON",
                     data: {
-                        id_from:$("[name='country_from'] option:selected").data("id"),
-                        id_to:$("[name='country'] option:selected").data("id"),
-                        amount_from:$("#from-rate").val()
+                        id_from: $("[name='country_from'] option:selected").data("id"),
+                        id_to: $("[name='country'] option:selected").data("id"),
+                        amount_from: $("#from-rate").val()
                     },
                     success: function (data) {
                         $('#to_amount_rate').text(data['value'])
@@ -143,6 +310,9 @@
                     }
 
                 });
+                fetch('assets/js/data.json')
+                    .then((response) => response.json())
+                    .then((json) => parseJson($("[name='country_from'] option:selected").data("value").toUpperCase(),json));
             })
             $('#flag_after').addClass('flag-icon flag-icon-' + $("[name='country'] option:selected").val().toLowerCase() + ' flag-icon-squared');
             $("[name='country']").change(function () {
@@ -156,9 +326,9 @@
                     type: "GET",
                     dataType: "JSON",
                     data: {
-                        id_from:$("[name='country_from'] option:selected").data("id"),
-                        id_to:$("[name='country'] option:selected").data("id"),
-                        amount_to:$("#to-rate").val()
+                        id_from: $("[name='country_from'] option:selected").data("id"),
+                        id_to: $("[name='country'] option:selected").data("id"),
+                        amount_to: $("#to-rate").val()
                     },
                     success: function (data) {
                         $('#to_amount_rate').text(data['value'])
@@ -181,9 +351,9 @@
                     type: "GET",
                     dataType: "JSON",
                     data: {
-                        id_from:$("[name='country_from'] option:selected").data("id"),
-                        id_to:$("[name='country'] option:selected").data("id"),
-                        amount_to:$("#to-rate").val()
+                        id_from: $("[name='country_from'] option:selected").data("id"),
+                        id_to: $("[name='country'] option:selected").data("id"),
+                        amount_to: $("#to-rate").val()
                     },
                     success: function (data) {
                         $('#to_amount_rate').text(data['value'])
@@ -206,9 +376,9 @@
                     type: "GET",
                     dataType: "JSON",
                     data: {
-                        id_from:$("[name='country_from'] option:selected").data("id"),
-                        id_to:$("[name='country'] option:selected").data("id"),
-                        amount_from:$("#from-rate").val()
+                        id_from: $("[name='country_from'] option:selected").data("id"),
+                        id_to: $("[name='country'] option:selected").data("id"),
+                        amount_from: $("#from-rate").val()
                     },
                     success: function (data) {
                         $('#to_amount_rate').text(data['value'])
@@ -231,26 +401,33 @@
                     type: "POST",
                     dataType: "JSON",
                     data: {
-                        id_from:$("[name='country_from'] option:selected").data("id"),
-                        id_to:$("[name='country'] option:selected").data("id"),
-                        amount_from:$("#from-rate").val(),
-                        amount_to:$("#to-rate").val(),
-                        charge:$("#sumary_total_charge").text(),
-                        sender_address:$("#sender_address").val(),
-                        sender_phone:$("#sender_phone").val(),
-                        sender_name:$("#sender_name").val(),
-                        receiver_address:$("#receiver_address").val(),
-                        receiver_phone:$("#receiver_phone").val(),
-                        receiver_name:$("#receiver_name").val(),
-                        source_fund:$("#sourcefound").val(),
-                        send_puporse:$("#sourcepurpose").val(),
+                        id_from: $("[name='country_from'] option:selected").data("id"),
+                        id_to: $("[name='country'] option:selected").data("id"),
+                        amount_from: $("#from-rate").val(),
+                        amount_to: $("#to-rate").val(),
+                        charge: $("#sumary_total_charge").text(),
+                        payable: $("#sumary_payable_usd").text(),
+                        sender_address: $("#sender_address").val(),
+                        sender_phone: $("#sender_phone").val(),
+                        sender_name: $("#sender_name").val(),
+                        receiver_address: $("#receiver_address").val(),
+                        receiver_phone: $("#output").text(),
+                        receiver_name: $("#receiver_name").val(),
+                        source_fund: $("#sourcefound").val(),
+                        send_puporse: $("#sourcepurpose").val(),
+                        method_payment:$('#methodpayment  option:selected').data('name'),
+                        method_type:$('#methodpayment').val(),
+                        bank_account: $("#bank_account").val(),
+                        bank_account_type: $("#bank_account_type").val(),
+                        bank_code: $("#bank_code").val(),
+                        bank_iban: $("#bank_iban").val(),
+
                     },
                     success: function (data) {
-                        var id=data['id'];
-                        /* var url = Routing.generate('app_agent_transaction_detail', {
-                             'id': id,
+                        var id = data['id'];
+                         var url = Routing.generate('historyuser', {
                          });
-                         window.open(url,'_parent');*/
+                         window.open(url,'_parent');
                     },
                     error: function (err) {
                         setTimeout(function () {
@@ -259,6 +436,22 @@
                     }
 
                 });
+            })
+            $("#bank_method").hide();
+            $('#methodpayment').change(function () {
+                if ($(this).val()==='bank'){
+                    $("#bank_method").show();
+                }else {
+                    $("#bank_method").hide();
+                }
+            })
+            $('#driectpayement').hide();
+            $("input[type=radio][name='paiement']").change(function () {
+                if ( $(this).val()==="directpayment"){
+                    $('#driectpayement').show();
+                }else {
+                    $('#driectpayement').hide();
+                }
             })
         });
     </script>

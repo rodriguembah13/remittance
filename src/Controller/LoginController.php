@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Customer;
 use App\Entity\User;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -52,6 +53,9 @@ class LoginController extends AbstractController
             $user->setIsactivate(false);
             $user->setRoles(["ROLE_CUSTOMER"]);
             $entityManager->persist($user);
+            $customer=new Customer();
+            $customer->setCompte($user);
+            $entityManager->persist($customer);
             $entityManager->flush();
             return $this->redirectToRoute('homeuser');
         }
