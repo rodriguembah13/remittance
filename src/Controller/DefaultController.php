@@ -24,6 +24,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
@@ -40,8 +41,7 @@ class DefaultController extends AbstractController
     private $sourcefundRepository;
     private $sourcepurposeRepository;
     private $senderReceiverRepository;
-
-
+    private $passwordEncoder;
     /**
      * @param CustomerRepository $customerRepository
      * @param LoggerInterface $logger
@@ -49,7 +49,7 @@ class DefaultController extends AbstractController
      * @param DataTableFactory $dataTableFactory
      * @param ParameterBagInterface $parameterBag
      */
-    public function __construct(CustomerRepository $customerRepository,ConfigurationRepository $configurationRepository,
+    public function __construct(UserPasswordHasherInterface $passwordEncoder,CustomerRepository $customerRepository,ConfigurationRepository $configurationRepository,
                                 CountryRepository $countryRepository,TransferzeroService $transferzeroService,
                                 SourcefundsRepository $sourcefundRepository,SenderReceiverRepository $senderReceiverRepository,
                                 SourcepurposeRepository $sourcepurposeRepository,
@@ -68,6 +68,7 @@ class DefaultController extends AbstractController
         $this->sourcefundRepository=$sourcefundRepository;
         $this->sourcepurposeRepository=$sourcepurposeRepository;
         $this->senderReceiverRepository=$senderReceiverRepository;
+        $this->passwordEncoder = $passwordEncoder;
     }
 
     /**
@@ -324,7 +325,58 @@ class DefaultController extends AbstractController
      */
     public function profil(Request $request): Response
     {
+        $entityManager = $this->getDoctrine()->getManager();
+        $user=$this->getUser();
+        $customer=$this->customerRepository->findOneBy(['compte'=>$user]);
+        if ($request->getMethod()=="POST"){
+            $customer->setCountry($request->get('country'));
+           $compte=$customer->getCompte();
+           $compte->setPhone($request->get('phone'));
+            $compte->setName($request->get('name'));
+            $compte->setAddress($request->get('address'));
+            $compte->setCity($request->get('city'));
+            $compte->setPostal($request->get('postal'));
+            $entityManager->flush();
+        }
         return $this->render('default/profil.html.twig', [
+            'configuration'=>$this->configurationRepository->findOneByLast(),
+            'countries'=>$this->countryRepository->findAll(),
+            'customer'=>$customer,
+        ]);
+    }
+    /**
+     * @Route("/changepassword", name="changepassword")
+     * @param Request $request
+     * @return Response
+     */
+    public function changepassword(Request $request): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $user=$this->getUser();
+        $customer=$this->customerRepository->findOneBy(['compte'=>$user]);
+        // Si l'utilisateur n'existe pas
+        if ($user === null) {
+            // On affiche une erreur
+            $this->addFlash('danger', 'Token Inconnu');
+            return $this->redirectToRoute('logincustomer');
+        }
+        if ($request->getMethod()=="POST"){
+            // On supprime le token
+
+            // On chiffre le mot de passe
+            $user->setPassword($this->passwordEncoder->hashPassword($customer->getCompte(), $request->request->get('newpassword')));
+
+            // On stocke
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->flush();
+
+            // On crée le message flash
+            $this->addFlash('message', 'Mot de passe mis à jour');
+
+            // On redirige vers la page de connexion
+            return $this->redirectToRoute('logincustomer');
+        }
+        return $this->render('default/changepassword.html.twig', [
             'configuration'=>$this->configurationRepository->findOneByLast(),
             'countries'=>$this->countryRepository->findAll(),
         ]);
